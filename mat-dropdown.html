@@ -1,0 +1,628 @@
+<!--
+@license
+Copyright (c) 2015 The expand.js authors. All rights reserved.
+This code may only be used under the BSD style license found at https://expandjs.github.io/LICENSE.txt
+The complete set of authors may be found at https://expandjs.github.io/AUTHORS.txt
+The complete set of contributors may be found at https://expandjs.github.io/CONTRIBUTORS.txt
+-->
+
+<!--
+This component is used to display a material dropdown.
+It must be used in conjunction with mat-option.
+
+@component mat-dropdown
+@description This component is used to display a material dropdown.
+
+@dependency mat-divider ExpandJS/mat-divider
+@dependency mat-icon ExpandJS/mat-icon
+@dependency mat-input-decorator ExpandJS/mat-input-decorator
+@dependency mat-menu ExpandJS/mat-menu
+@dependency mat-option ExpandJS/mat-option
+@dependency xp-input-state ExpandJS/xp-input-state
+@dependency xp-selected-state ExpandJS/xp-selected-state
+
+@devDependency mat-demo ExpandJS/mat-demo
+@devDependency mat-option ExpandJS/mat-option
+-->
+
+<link rel="import" href="../mat-divider/mat-divider.html">
+<link rel="import" href="../mat-icon/mat-icon.html">
+<link rel="import" href="../mat-input-decorator/mat-input-decorator.html">
+<link rel="import" href="../mat-menu/mat-menu.html">
+<link rel="import" href="../mat-option/mat-option.html">
+<link rel="import" href="../xp-input-state/xp-input-state.html">
+<link rel="import" href="../xp-selected-state/xp-selected-state.html">
+
+<polymer-element name="mat-dropdown" constructor="MATDropdownElement" attributes="autoFocus changed description disabled empty emptyLabel emptyOptions error focused form fullWidth inputElement inputValue invalid invalidMessage label name options pulldown required selected selection singleOption value">
+
+    <template>
+        <style>
+            :host {
+                display: inline-block;
+                overflow: visible;
+            }
+
+            :host([emptyOptions]) {
+                display: none !important;
+            }
+
+            :host([fullWidth]) {
+                display: block;
+                width: auto !important;
+            }
+
+            :host #matDropdownDecorator::shadow #matInputPlaceholder,
+            :host #matDropdownDecorator::shadow #matInputPrefix,
+            :host #matDropdownDecorator::shadow #matInputSuffix,
+            :host #matDropdownOptions ::content mat-option::shadow #matOptionIcon,
+            :host #matDropdownOptions ::content mat-option::shadow #matOptionSecondaryText,
+            :host([fullWidth]) #matDropdownDecorator::shadow #matInputUnderline,
+            :host([fullWidth]) #matDropdownDecorator::shadow #matInputHelper,
+            :host([pulldown]) #matDropdownDecorator::shadow #matInputUnderline,
+            :host([pulldown]) #matDropdownDecorator::shadow #matInputHelper,
+            :host([pulldown]) #matDropdownOptions ::content mat-option[selected] {
+                display: none !important;
+            }
+
+            :host([fullWidth]) #matDropdownDecorator::shadow #matInputWrapper,
+            :host([pulldown]) #matDropdownDecorator::shadow #matInputWrapper,
+            :host #matDropdownDecorator::shadow #matInputMain {
+                margin: 0;
+                padding: 0;
+            }
+
+            :host #matDropdownDecorator .dummyOption {
+                height: 0 !important;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            :host #matDropdownDecorator .dummyOption,
+            :host #matDropdownOptions ::content mat-option::shadow #matOptionMain {
+                padding: 0 24px 0 16px;
+            }
+
+            :host([pulldown]) #matDropdownDecorator .dummyOption,
+            :host([pulldown]) #matDropdownOptions ::content mat-option::shadow #matOptionMain,
+            :host([pulldown]) #matDropdownFirst::shadow #matOptionMain {
+                padding: 0 48px 0 24px;
+            }
+
+            :host #matDropdownSelected {
+                height: 32px;
+            }
+
+            :host([fullWidth]) #matDropdownSelected,
+            :host([pulldown]) #matDropdownSelected {
+                height: 56px;
+            }
+
+            :host #matDropdownSelected::shadow #matOptionMain {
+                padding: 0;
+            }
+
+            :host([pulldown]) #matDropdownSelected::shadow #matOptionMain {
+                padding: 0 16px 0 24px;
+            }
+
+            :host(:not([selected])) #matDropdownSelected::shadow #matOptionWrapper[foreground="dark"] #matOptionLabel {
+                opacity: 0.44;
+            }
+
+            :host(:not([selected])) #matDropdownSelected::shadow #matOptionWrapper[foreground="light"] #matOptionLabel {
+                opacity: 0.30;
+            }
+
+            :host([fullWidth]) #matDropdownMenu::shadow #matMenuWrapper::shadow #matOverlayAdaptee {
+                right: 0;
+            }
+
+            :host #matDropdownUp {
+                position: absolute;
+                right: 16px;
+                top: 16px;
+            }
+
+            :host #matDropdownDivider {
+                top: 56px;
+            }
+
+            :host([pulldown]) #matDropdownOptions ::content mat-option,
+            :host([pulldown]) #matDropdownFirst {
+                height: 56px;
+                margin: -8px 0 8px 0;
+            }
+
+            :host([pulldown]) #matDropdownOptions ::content mat-option + mat-option,
+            :host([pulldown][selected]) #matDropdownOptions ::content mat-option {
+                height: 32px;
+                margin: 0;
+            }
+        </style>
+        <template context="{{}}" is="xp-input-state" id="xpInputState" changed="{{changed}}"
+                  disabled="{{disabled}}" empty="{{empty}}" error="{{error}}" focused="{{focused}}"
+                  form="{{form}}" inputElement="{{inputElement}}" inputValue="{{inputValue}}"
+                  invalid="{{invalid}}" invalidMessage="{{invalidMessage}}" name="{{name}}"
+                  opCommitFrom="{{commitFrom}}" opCommitTo="{{commitTo}}" opIndex="{{index}}"
+                  opUpdate="{{update}}" opValidate="{{validate}}" required="{{required}}"
+                  value="{{value}}"></template>
+        <template context="{{}}" is="xp-selected-state" id="xpSelectedState" items="{{options}}"
+                  itemSelector="mat-option" selection="{{selection}}" switchable="{{true}}"></template>
+        <mat-input-decorator context="{{}}" id="matDropdownDecorator" description="{{description}}"
+                             disabled="{{disabled}}" empty="{{empty}}" emptyLabel="{{emptyLabel}}" error="{{error}}"
+                             focused="{{focused}}" fullWidth="{{fullWidth}}" inputElement="{{inputElement}}"
+                             inputValue="{{inputValue}}" invalid="{{invalid}}" invalidMessage="{{invalidMessage}}">
+            <div id="matDropdownSpacer">
+                <div class="dummyOption">{{label}}</div>
+                <template repeat="{{option in options}}">
+                    <div class="dummyOption" font-type="subhead">{{option.label || option.value}}</div>
+                </template>
+            </div>
+            <mat-option id="matDropdownSelected" disabled?="{{disabled}}" label="{{selection ? selection.label : label}}" secondaryIcon="{{!singleOption ? 'navigation:arrow-drop-down' : ''}}" target="{{$.matDropdownMenu}}" value="{{selection.value}}"></mat-option>
+            <mat-menu id="matDropdownMenu" background="{{background}}" hidden?="{{singleOption}}">
+                <div class="dummyOption" font-type="subhead">{{label}}</div>
+                <mat-icon id="matDropdownUp" hidden?="{{!pulldown}}" name="navigation:arrow-drop-up" opacity="hint"></mat-icon>
+                <mat-option id="matDropdownFirst" hidden?="{{!pulldown || !selection}}" label="{{selection.label}}" value="{{selection.value}}"></mat-option>
+                <mat-divider id="matDropdownDivider" hidden?="{{!pulldown}}" cap></mat-divider>
+                <div id="matDropdownOptions" on-xp-activate="{{handleActivate}}">
+                    <content id="optionsContent" select="mat-option"></content>
+                </div>
+            </mat-menu>
+        </mat-input-decorator>
+    </template>
+
+    <script>
+        XPComponent({
+
+            /**
+             * Focuses the input.
+             *
+             * @method focus
+             * @returns {Element}
+             */
+            focus: function () {
+                var self = this;
+                self.$.matDropdownSelected.focus();
+                return self;
+            },
+
+            /**
+             * Resets the input.
+             *
+             * @method reset
+             * @returns {Element}
+             */
+            reset: function () {
+                var self = this;
+                self.$.xpInputState.reset();
+                return self;
+            },
+
+            /**
+             * Selects an option.
+             *
+             * @method select
+             * @param {string} [value = ""]
+             * @returns {Element}
+             */
+            select: function (value) {
+
+                // Asserting
+                XP.assertArgument(XP.isVoid(value) || XP.isString(value), 1, 'string');
+
+                // Vars
+                var self       = this,
+                    isSelected = XP.includes(self.options, self.selection) && self.selection.value === value,
+                    filter     = isSelected ? null : value || '',
+                    option     = isSelected ? null : XP.find(self.options, function (option) { return option.value === filter; });
+
+                // Checking
+                if (isSelected) { return option; }
+
+                // Selecting
+                self.$.xpSelectedState.unselect(self.selection);
+                self.$.xpSelectedState.select(option);
+
+                return option;
+            },
+
+            /**
+             * Selects the next option.
+             *
+             * @method selectNext
+             * @returns {Element}
+             */
+            selectNext: function () {
+                return this.$.xpSelectedState.selectNext();
+            },
+
+            /**
+             * Selects the previous option.
+             *
+             * @method selectPrevious
+             * @returns {Element}
+             */
+            selectPrevious: function () {
+                return this.$.xpSelectedState.selectPrevious();
+            },
+
+            /*********************************************************************/
+
+            /**
+             * Commits from input's value.
+             *
+             * @method commitFrom
+             * @returns {Element}
+             * @private
+             */
+            commitFrom: function () {
+                var self = this;
+                self.inputValue = self.inputElement.value;
+                return self;
+            },
+
+            /**
+             * Commits to input's value.
+             *
+             * @method commitTo
+             * @returns {Element}
+             * @private
+             */
+            commitTo: function () {
+                var self = this;
+                if (self.inputValue !== self.inputElement.value) { self.inputElement.value = self.inputValue; }
+                return self;
+            },
+
+            /**
+             * Indexes the input.
+             *
+             * @method index
+             * @param {number} value
+             * @returns {Element}
+             * @private
+             */
+            index: function (value) {
+                var self = this;
+                self.$.matDropdownSelected.tabIndex = value;
+                self.$.matDropdownFirst.tabIndex    = value;
+                return self;
+            },
+
+            /**
+             * Updates the input.
+             *
+             * @method updateInput
+             * @returns {Element}
+             * @private
+             */
+            update: function () {
+                var self = this;
+                XP.setAttribute(self.inputElement, 'disabled', self.disabled);
+                XP.setAttribute(self.inputElement, 'name', self.name);
+                XP.setAttribute(self.inputElement, 'required', self.required);
+                return self;
+            },
+
+            /**
+             * Validates the input.
+             *
+             * @method validate
+             * @returns {Element}
+             * @private
+             */
+            validate: function () {
+                var self = this;
+                self.invalid        = self.inputElement.validity.valid !== true;
+                self.invalidMessage = self.inputElement.validationMessage;
+                return self;
+            },
+
+            /*********************************************************************/
+
+            // OBSERVE
+            observe: {
+                'selection.value': 'selectionObserver'
+            },
+
+            // PUBLISH
+            publish: {
+
+                /**
+                 * If set to true, the input will focus on attach.
+                 *
+                 * @attribute autoFocus
+                 * @type boolean
+                 * @default false
+                 */
+                autoFocus: {reflect: true, value: false},
+
+                /**
+                 * The paper's background color.
+                 *
+                 * @attribute background
+                 * @type string
+                 * @default ""
+                 */
+                background: {reflect: true, value: ''},
+
+                /**
+                 * If set to true, the input's value is changed.
+                 *
+                 * @attribute changed
+                 * @type boolean
+                 * @default false
+                 * @readonly
+                 */
+                changed: {reflect: true, value: false},
+
+                /**
+                 * The description to be shown underneath the input
+                 *
+                 * @attribute description
+                 * @type string
+                 * @default ""
+                 */
+                description: {reflect: true, value: ''},
+
+                /**
+                 * If set to true, the input is disabled.
+                 *
+                 * @attribute disabled
+                 * @type boolean
+                 * @default false
+                 */
+                disabled: {reflect: true, value: false},
+
+                /**
+                 * If set to true, the input is empty.
+                 *
+                 * @attribute empty
+                 * @type boolean
+                 * @default false
+                 * @readonly
+                 */
+                empty: {reflect: true, value: false},
+
+                /**
+                 * If set to true, the label is hidden.
+                 *
+                 * @attribute emptyLabel
+                 * @type boolean
+                 * @default false
+                 * @readonly
+                 */
+                emptyLabel: {reflect: true, value: false},
+
+                /**
+                 * If set to true, there are no options.
+                 *
+                 * @attribute emptyOptions
+                 * @type boolean
+                 * @default false
+                 * @readonly
+                 */
+                emptyOptions: {reflect: true, value: false},
+
+                /**
+                 * The input's custom error message, used instead of `invalidMessage`.
+                 *
+                 * @attribute error
+                 * @type string
+                 * @default ""
+                 */
+                error: {reflect: true, value: ''},
+
+                /**
+                 * If set to true, the input is focused.
+                 *
+                 * @attribute focused
+                 * @type boolean
+                 * @default false
+                 */
+                focused: {reflect: true, value: false},
+
+                /**
+                 * The input's form.
+                 *
+                 * @attribute form
+                 * @type Element
+                 * @readonly
+                 */
+                form: {reflect: false, value: null},
+
+                /**
+                 * If set to true, the input is full width.
+                 *
+                 * @attribute fullWidth
+                 * @type boolean
+                 * @default false
+                 */
+                fullWidth: {reflect: true, value: false},
+
+                /**
+                 * The appended input's element.
+                 *
+                 * @attribute inputElement
+                 * @type Element
+                 * @readonly
+                 */
+                inputElement: {reflect: false, value: null},
+
+                /**
+                 * The input's plain value.
+                 *
+                 * @attribute inputValue
+                 * @type string
+                 * @default ""
+                 */
+                inputValue: {reflect: false, value: ''},
+
+                /**
+                 * If set to true, the input's value is not valid.
+                 *
+                 * @attribute invalid
+                 * @type boolean
+                 * @default false
+                 * @readonly
+                 */
+                invalid: {reflect: true, value: false},
+
+                /**
+                 * The input's system error message.
+                 *
+                 * @attribute invalidMessage
+                 * @type string
+                 * @default ""
+                 * @readonly
+                 */
+                invalidMessage: {reflect: true, value: ''},
+
+                /**
+                 * The input's label.
+                 *
+                 * @attribute label
+                 * @type string
+                 * @default ""
+                 */
+                label: {reflect: false, value: ''},
+
+                /**
+                 * The input's name.
+                 *
+                 * @attribute name
+                 * @type string
+                 * @default ""
+                 */
+                name: {reflect: true, value: ''},
+
+                /**
+                 * The dropdown's options.
+                 *
+                 * @property options
+                 * @type Array
+                 * @readonly
+                 */
+                options: {reflect: false, value: null},
+
+                /**
+                 * If set to true, the selected option is always on top.
+                 *
+                 * @attribute pulldown
+                 * @type boolean
+                 * @default false
+                 */
+                pulldown: {reflect: true, value: false},
+
+                /**
+                 * If set to true, the input is required.
+                 *
+                 * @attribute required
+                 * @type boolean
+                 * @default false
+                 */
+                required: {reflect: true, value: false},
+
+                /**
+                 * If set to true, an option is selected.
+                 *
+                 * @attribute selected
+                 * @type boolean
+                 * @default false
+                 * @readonly
+                 */
+                selected: {reflect: true, value: false},
+
+                /**
+                 * The dropdown's selected option.
+                 *
+                 * @attribute selection
+                 * @type Element
+                 * @readonly
+                 */
+                selection: {reflect: false, value: null},
+
+                /**
+                 * If set to true, there's only one option.
+                 *
+                 * @attribute singleOption
+                 * @type boolean
+                 * @default false
+                 * @readonly
+                 */
+                singleOption: {reflect: true, value: false},
+
+                /**
+                 * The input's value.
+                 *
+                 * @attribute value
+                 * @type *
+                 */
+                value: {reflect: false, value: null}
+            },
+
+            /*********************************************************************/
+
+            // OBSERVER
+            inputValueChanged: function (pre, post) {
+                this.select(post);
+            },
+
+            // OBSERVER
+            optionsChanged: function () {
+                var self = this;
+                self.singleOption = self.options.length === 1;
+                self.emptyOptions = self.options.length === 0;
+                self.select(self.inputValue);
+            },
+
+            // OBSERVER
+            selectionChanged: function (pre, post) {
+                var self = this;
+                if (arguments.length < 2) { return; }
+                if (pre) { XP.removeAttribute(pre, 'selected'); }
+                if (post) { XP.addAttribute(post, 'selected'); }
+                self.inputValue = (post && post.value) || '';
+                self.selected   = !!post;
+            },
+
+            // OBSERVER
+            selectionObserver: function () {
+                var self = this;
+                XP.delay(function () { self.select(self.inputValue); });
+            },
+
+            /*********************************************************************/
+
+            // LISTENER
+            attached: function () {
+                var self = this;
+                self.form    = XP.findParentElement(self, 'form');
+                self.invalid = false;
+                if (self.autoFocus) { XP.delay(function () { self.focus(); }); }
+            },
+
+            // LISTENER
+            detached: function () {
+                this.form = null;
+            },
+
+            // LISTENER
+            ready: function () {
+                var self = this;
+                self.inputElement = self.appendChild(XP.createElement('input', {attributes: {hidden: true, type: 'text', value: self.inputValue}}));
+                XP.listen(self.$.matDropdownSelected, 'blur', self.$.xpInputState.handleBlurBinded);
+                XP.listen(self.$.matDropdownSelected, 'focus', self.$.xpInputState.handleFocusBinded);
+            },
+
+            /*********************************************************************/
+
+            // HANDLER
+            handleActivate: function (event) {
+                this.$.xpSelectedState.select(event.detail.firer);
+            }
+        });
+    </script>
+
+</polymer-element>

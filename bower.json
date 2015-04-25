@@ -1,0 +1,30 @@
+{
+  "name": "mat-dropdown",
+  "license": "BSD-3-Clause",
+  "version": "0.8.0",
+  "description": "This component is used to display a material dropdown.",
+  "authors": [
+    "Giuliano Rullo <g.rullo@expandjs.com>",
+    "Maurizio Stefàno <m.stefano@expandjs.com>",
+    "Robert Manolea <r.manolea@expandjs.com>"
+  ],
+  "main": [
+    "mat-dropdown.html"
+  ],
+  "keywords": [
+    "web-components"
+  ],
+  "dependencies": {
+    "mat-divider": "ExpandJS/mat-divider",
+    "mat-icon": "ExpandJS/mat-icon",
+    "mat-input-decorator": "ExpandJS/mat-input-decorator",
+    "mat-menu": "ExpandJS/mat-menu",
+    "mat-option": "ExpandJS/mat-option",
+    "xp-input-state": "ExpandJS/xp-input-state",
+    "xp-selected-state": "ExpandJS/xp-selected-state"
+  },
+  "devDependencies": {
+    "mat-demo": "ExpandJS/mat-demo",
+    "mat-option": "ExpandJS/mat-option"
+  }
+}
