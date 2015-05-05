@@ -39,7 +39,7 @@ It must be used in conjunction with mat-option.
 <link rel="import" href="../xp-input-state/xp-input-state.html">
 <link rel="import" href="../xp-selected-state/xp-selected-state.html">
 
-<polymer-element name="mat-dropdown" constructor="MATDropdownElement" attributes="autoFocus changed description disabled empty emptyLabel emptyOptions error focused form fullWidth inputElement inputValue invalid invalidMessage label name options pulldown required selected selection singleOption value">
+<polymer-element name="mat-dropdown" constructor="MATDropdownElement" attributes="autoFocus changed description disabled empty emptyLabel emptyOptions error focused form fullWidth injected invalid invalidMessage label model name options pulldown required selected selection singleOption value">
 
     <template>
         <style>
@@ -146,19 +146,17 @@ It must be used in conjunction with mat-option.
                 margin: 0;
             }
         </style>
-        <template context="{{}}" is="xp-input-state" id="xpInputState" changed="{{changed}}"
-                  disabled="{{disabled}}" empty="{{empty}}" error="{{error}}" focused="{{focused}}"
-                  form="{{form}}" inputElement="{{inputElement}}" inputValue="{{inputValue}}"
-                  invalid="{{invalid}}" invalidMessage="{{invalidMessage}}" name="{{name}}"
-                  opCommitFrom="{{commitFrom}}" opCommitTo="{{commitTo}}" opIndex="{{index}}"
-                  opUpdate="{{update}}" opValidate="{{validate}}" required="{{required}}"
-                  value="{{value}}"></template>
+        <template context="{{}}" is="xp-input-state" id="xpInputState" changed="{{changed}}" disabled="{{disabled}}"
+                  empty="{{empty}}" error="{{error}}" focused="{{focused}}" form="{{form}}" injected="{{injected}}"
+                  invalid="{{invalid}}" invalidMessage="{{invalidMessage}}" model="{{model}}" name="{{name}}"
+                  opCommitFrom="{{commitFrom}}" opCommitTo="{{commitTo}}" opIndex="{{index}}" opUpdate="{{update}}"
+                  opValidate="{{validate}}" required="{{required}}" value="{{value}}"></template>
         <template context="{{}}" is="xp-selected-state" id="xpSelectedState" items="{{options}}"
                   itemSelector="mat-option" selection="{{selection}}" switchable="{{true}}"></template>
         <mat-input-decorator context="{{}}" id="matDropdownDecorator" description="{{description}}"
                              disabled="{{disabled}}" empty="{{empty}}" emptyLabel="{{emptyLabel}}" error="{{error}}"
-                             focused="{{focused}}" fullWidth="{{fullWidth}}" inputElement="{{inputElement}}"
-                             inputValue="{{inputValue}}" invalid="{{invalid}}" invalidMessage="{{invalidMessage}}">
+                             focused="{{focused}}" fullWidth="{{fullWidth}}" injected="{{injected}}"
+                             invalid="{{invalid}}" invalidMessage="{{invalidMessage}}" value="{{value}}">
             <div id="matDropdownSpacer">
                 <div class="dummyOption">{{label}}</div>
                 <template repeat="{{option in options}}">
@@ -264,7 +262,7 @@ It must be used in conjunction with mat-option.
              */
             commitFrom: function () {
                 var self = this;
-                self.inputValue = self.inputElement.value;
+                self.value = self.injected.value;
                 return self;
             },
 
@@ -277,7 +275,7 @@ It must be used in conjunction with mat-option.
              */
             commitTo: function () {
                 var self = this;
-                if (self.inputValue !== self.inputElement.value) { self.inputElement.value = self.inputValue; }
+                if (self.value !== self.injected.value) { self.injected.value = self.value; }
                 return self;
             },
 
@@ -305,9 +303,9 @@ It must be used in conjunction with mat-option.
              */
             update: function () {
                 var self = this;
-                XP.setAttribute(self.inputElement, 'disabled', self.disabled);
-                XP.setAttribute(self.inputElement, 'name', self.name);
-                XP.setAttribute(self.inputElement, 'required', self.required);
+                XP.setAttribute(self.injected, 'disabled', self.disabled);
+                XP.setAttribute(self.injected, 'name', self.name);
+                XP.setAttribute(self.injected, 'required', self.required);
                 return self;
             },
 
@@ -320,8 +318,8 @@ It must be used in conjunction with mat-option.
              */
             validate: function () {
                 var self = this;
-                self.invalid        = self.inputElement.validity.valid !== true;
-                self.invalidMessage = self.inputElement.validationMessage;
+                self.invalid        = self.injected.validity.valid !== true;
+                self.invalidMessage = self.injected.validationMessage;
                 return self;
             },
 
@@ -450,20 +448,11 @@ It must be used in conjunction with mat-option.
                 /**
                  * The appended input's element.
                  *
-                 * @attribute inputElement
+                 * @attribute injected
                  * @type Element
                  * @readonly
                  */
-                inputElement: {reflect: false, value: null},
-
-                /**
-                 * The input's plain value.
-                 *
-                 * @attribute inputValue
-                 * @type string
-                 * @default ""
-                 */
-                inputValue: {reflect: false, value: ''},
+                injected: {reflect: false, value: null},
 
                 /**
                  * If set to true, the input's value is not valid.
@@ -493,6 +482,14 @@ It must be used in conjunction with mat-option.
                  * @default ""
                  */
                 label: {reflect: false, value: ''},
+
+                /**
+                 * The input's model.
+                 *
+                 * @attribute model
+                 * @type *
+                 */
+                model: {reflect: false, value: null},
 
                 /**
                  * The input's name.
@@ -560,27 +557,23 @@ It must be used in conjunction with mat-option.
                 singleOption: {reflect: true, value: false},
 
                 /**
-                 * The input's value.
+                 * The input's plain value.
                  *
                  * @attribute value
-                 * @type *
+                 * @type string
+                 * @default ""
                  */
-                value: {reflect: false, value: null}
+                value: {reflect: false, value: ''}
             },
 
             /*********************************************************************/
-
-            // OBSERVER
-            inputValueChanged: function (pre, post) {
-                this.select(post);
-            },
 
             // OBSERVER
             optionsChanged: function () {
                 var self = this;
                 self.singleOption = self.options.length === 1;
                 self.emptyOptions = self.options.length === 0;
-                self.select(self.inputValue);
+                self.select(self.value);
             },
 
             // OBSERVER
@@ -589,14 +582,19 @@ It must be used in conjunction with mat-option.
                 if (arguments.length < 2) { return; }
                 if (pre) { XP.removeAttribute(pre, 'selected'); }
                 if (post) { XP.addAttribute(post, 'selected'); }
-                self.inputValue = (post && post.value) || '';
-                self.selected   = !!post;
+                self.selected = !!post;
+                self.value    = (post && post.value) || '';
             },
 
             // OBSERVER
             selectionObserver: function () {
                 var self = this;
-                XP.delay(function () { self.select(self.inputValue); });
+                XP.delay(function () { self.select(self.value); });
+            },
+
+            // OBSERVER
+            valueChanged: function (pre, post) {
+                this.select(post);
             },
 
             /*********************************************************************/
@@ -617,7 +615,7 @@ It must be used in conjunction with mat-option.
             // LISTENER
             ready: function () {
                 var self = this;
-                self.inputElement = self.appendChild(XP.createElement('input', {attributes: {hidden: true, type: 'text', value: self.inputValue}}));
+                self.injected = self.appendChild(XP.createElement('input', {attributes: {hidden: true, type: 'text', value: self.value}}));
                 XP.listen(self.$.matDropdownSelected, 'blur', self.$.xpInputState.handleBlurBinded);
                 XP.listen(self.$.matDropdownSelected, 'focus', self.$.xpInputState.handleFocusBinded);
             },
