@@ -662,7 +662,7 @@ It must be used in conjunction with mat-option.
             // OBSERVER
             selectionObserver: function () {
                 var self = this;
-                XP.requestAnimationFrame(function () { self.select(self.value); });
+                XP.delay(function () { self.select(self.value); });
             },
 
             // OBSERVER
@@ -677,7 +677,7 @@ It must be used in conjunction with mat-option.
                 var self = this;
                 self.form    = XP.findParentElement(self, 'form');
                 self.invalid = false;
-                if (self.autoFocus) { XP.requestAnimationFrame(function () { self.focus(); }); }
+                if (self.autoFocus) { XP.delay(function () { self.focus(); }); }
             },
 
             // LISTENER
