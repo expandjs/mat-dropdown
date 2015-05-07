@@ -163,7 +163,7 @@ It must be used in conjunction with mat-option.
                     <div class="dummyOption" font-type="subhead">{{option.label || option.value}}</div>
                 </template>
             </div>
-            <mat-option id="matDropdownSelected" disabled?="{{disabled}}" label="{{selection ? selection.label : label}}" secondaryIcon="{{!singleOption ? 'navigation:arrow-drop-down' : ''}}" target="{{$.matDropdownMenu}}" value="{{selection.value}}"></mat-option>
+            <mat-option id="matDropdownSelected" disabled?="{{disabled}}" label="{{selection ? selection.label : label}}" secondaryIcon="{{!singleOption ? 'navigation:arrow-drop-down' : ''}}" value="{{selection.value}}" on-xp-activate="{{handleShowed}}"></mat-option>
             <mat-menu id="matDropdownMenu" background="{{background}}" hidden?="{{singleOption}}">
                 <div class="dummyOption" font-type="subhead">{{label}}</div>
                 <mat-icon id="matDropdownUp" hidden?="{{!pulldown}}" name="navigation:arrow-drop-up" opacity="hint"></mat-icon>
@@ -178,6 +178,15 @@ It must be used in conjunction with mat-option.
 
     <script>
         XPElement({
+
+            /**
+             * Fired when the items change.
+             *
+             * @event xp-items-change
+             * @param {Element} firer
+             * @param {Array} items
+             * @bubbles
+             */
 
             /**
              * Fired on item selection.
@@ -216,6 +225,18 @@ It must be used in conjunction with mat-option.
             focus: function () {
                 var self = this;
                 self.$.matDropdownSelected.focus();
+                return self;
+            },
+
+            /**
+             * Hides the dropdown.
+             *
+             * @method hide
+             * @returns {Element}
+             */
+            hide: function () {
+                var self = this;
+                self.$.matDropdownMenu.hide();
                 return self;
             },
 
@@ -277,6 +298,30 @@ It must be used in conjunction with mat-option.
              */
             selectPrevious: function () {
                 return this.$.xpSelectedState.selectPrevious();
+            },
+
+            /**
+             * Shows the dropdown.
+             *
+             * @method show
+             * @returns {Element}
+             */
+            show: function () {
+                var self = this;
+                self.$.matDropdownMenu.show();
+                return self;
+            },
+
+            /**
+             * Toggles the dropdown.
+             *
+             * @method toggle
+             * @returns {Element}
+             */
+            toggle: function () {
+                var self = this;
+                self.$.matDropdownMenu.toggle();
+                return self;
             },
 
             /*********************************************************************/
@@ -653,6 +698,12 @@ It must be used in conjunction with mat-option.
             // HANDLER
             handleActivate: function (event) {
                 this.$.xpSelectedState.select(event.detail.firer);
+            },
+
+            // HANDLER
+            handleShowed: function (event) {
+                event.stopPropagation();
+                this.show();
             }
         });
     </script>
