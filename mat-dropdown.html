@@ -120,10 +120,6 @@ It must be used in conjunction with mat-option.
                 opacity: 0.30;
             }
 
-            :host([fullWidth]) #matDropdownMenu::shadow #matMenuWrapper::shadow #matOverlayAdaptee {
-                right: 0;
-            }
-
             :host #matDropdownUp {
                 position: absolute;
                 right: 16px;
@@ -165,7 +161,6 @@ It must be used in conjunction with mat-option.
             </div>
             <mat-option id="matDropdownSelected" disabled?="{{disabled}}" label="{{selection ? selection.label : label}}" secondaryIcon="{{!singleOption ? 'navigation:arrow-drop-down' : ''}}" value="{{selection.value}}" on-xp-activate="{{handleShowed}}"></mat-option>
             <mat-menu id="matDropdownMenu" background="{{background}}" hidden?="{{singleOption}}" target="{{$.matDropdownSelected}}">
-                <div class="dummyOption" font-type="subhead">{{label}}</div>
                 <mat-icon id="matDropdownUp" hidden?="{{!pulldown}}" name="navigation:arrow-drop-up" opacity="hint"></mat-icon>
                 <mat-option id="matDropdownFirst" hidden?="{{!pulldown || !selection}}" label="{{selection.label}}" value="{{selection.value}}"></mat-option>
                 <mat-divider id="matDropdownDivider" hidden?="{{!pulldown}}" cap></mat-divider>
@@ -237,7 +232,7 @@ It must be used in conjunction with mat-option.
             hide: function () {
                 var self = this;
                 self.$.matDropdownMenu.hide();
-                return self;
+                return self.resize();
             },
 
             /**
@@ -309,7 +304,7 @@ It must be used in conjunction with mat-option.
             show: function () {
                 var self = this;
                 self.$.matDropdownMenu.show();
-                return self;
+                return self.resize();
             },
 
             /**
@@ -321,7 +316,7 @@ It must be used in conjunction with mat-option.
             toggle: function () {
                 var self = this;
                 self.$.matDropdownMenu.toggle();
-                return self;
+                return self.resize();
             },
 
             /*********************************************************************/
@@ -364,6 +359,19 @@ It must be used in conjunction with mat-option.
                 var self = this;
                 self.$.matDropdownSelected.tabIndex = value;
                 self.$.matDropdownFirst.tabIndex    = value;
+                return self;
+            },
+
+            /**
+             * Resizes the dropdown's menu.
+             *
+             * @method resize
+             * @returns {Element}
+             * @private
+             */
+            resize: function () {
+                var self = this;
+                XP.setStyle(self.$.matDropdownMenu.$.matMenuWrapper.$.matOverlayAdaptee, 'width', self.clientWidth + 'px');
                 return self;
             },
 
