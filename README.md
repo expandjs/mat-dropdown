@@ -1,3 +1,3 @@
 # mat-dropdown
 
-See the [`documentation page`](http://www.expandjs.com/elements/mat-dropdown) for more information.
+See the [`documentation page`](http://expandjs.com/elements/mat-dropdown) for more information.

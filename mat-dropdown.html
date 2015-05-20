@@ -13,8 +13,8 @@ It must be used in conjunction with mat-option.
 @element mat-dropdown
 @description A custom element used to display a Material Design dropdown
 @group inputs
-@homepage http://www.expandjs.com/elements/mat-dropdown
-@demo http://www.expandjs.com/demo/mat-dropdown
+@homepage http://expandjs.com/elements/mat-dropdown
+@demo http://expandjs.com/demo/mat-dropdown
 
 @dependency polymer Polymer/polymer#^0.5
 @dependency expandjs ExpandJS/expandjs
@@ -211,6 +211,18 @@ It must be used in conjunction with mat-option.
              */
 
             /*********************************************************************/
+
+            /**
+             * Blurs the input.
+             *
+             * @method blur
+             * @returns {Element}
+             */
+            blur: function () {
+                var self = this;
+                self.$.matDropdownSelected.blur();
+                return self;
+            },
 
             /**
              * Focuses the input.
