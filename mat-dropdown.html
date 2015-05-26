@@ -161,7 +161,7 @@ It must be used in conjunction with mat-option.
                     <div class="dummyOption" font-type="subhead">{{option.label || option.value}}</div>
                 </template>
             </div>
-            <mat-option id="matDropdownSelected" disabled?="{{disabled}}" label="{{selection ? selection.label : label}}" secondaryIcon="{{(!singleOption && !selection) ? 'navigation:arrow-drop-down' : ''}}" value="{{selection.value}}" on-xp-activate="{{handleShowed}}"></mat-option>
+            <mat-option id="matDropdownSelected" disabled?="{{disabled}}" label="{{selection ? selection.label : label}}" secondaryIcon="{{(!singleOption || !selection) ? 'navigation:arrow-drop-down' : ''}}" value="{{selection.value}}" on-xp-activate="{{handleShowed}}"></mat-option>
             <mat-menu id="matDropdownMenu" background="{{background}}" hidden?="{{singleOption && selection}}" target="{{$.matDropdownSelected}}">
                 <mat-icon id="matDropdownUp" hidden?="{{!pulldown}}" name="navigation:arrow-drop-up" opacity="hint"></mat-icon>
                 <mat-option id="matDropdownFirst" hidden?="{{!pulldown || !selection}}" label="{{selection.label}}" value="{{selection.value}}"></mat-option>
