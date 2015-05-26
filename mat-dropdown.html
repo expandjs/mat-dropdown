@@ -668,7 +668,7 @@ It must be used in conjunction with mat-option.
                 var self = this;
                 self.singleOption = self.options.length === 1;
                 self.emptyOptions = self.options.length === 0;
-                self.select(self.value);
+                self.select(self.singleOption ? self.options[0].value : self.value);
             },
 
             // OBSERVER
