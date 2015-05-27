@@ -420,6 +420,12 @@ It must be used in conjunction with mat-option.
 
             /*********************************************************************/
 
+            // COMPUTED
+            computed: {
+                'singleOption': 'options.length === 1',
+                'emptyOptions': 'options.length === 0'
+            },
+
             // OBSERVE
             observe: {
                 'selection.value': 'selectionObserver'
@@ -665,10 +671,7 @@ It must be used in conjunction with mat-option.
 
             // OBSERVER
             optionsChanged: function () {
-                var self = this;
-                self.singleOption = self.options.length === 1;
-                self.emptyOptions = self.options.length === 0;
-                self.select(self.value);
+                this.select(this.value);
             },
 
             // OBSERVER
