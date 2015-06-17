@@ -1,0 +1,44 @@
+<link rel="import" href="../mat-demo/mat-demo.html">
+<link rel="import" href="mat-dropdown.html">
+
+<dom-module id="mat-dropdown-demo">
+
+    <template>
+        <mat-demo label="mat-dropdown">
+
+            <div class="demo-title">Default</div>
+            <mat-dropdown label="Select a value...">
+                <mat-option value="1" label="Value 1"></mat-option>
+                <mat-option value="2" label="Value 2"></mat-option>
+                <mat-option value="3" label="Value 3"></mat-option>
+                <mat-option value="4" label="Value 4"></mat-option>
+            </mat-dropdown>
+
+            <div class="demo-title">Pulldown</div>
+            <mat-dropdown label="Select a value..." pulldown>
+                <mat-option value="1" label="Value 1"></mat-option>
+                <mat-option value="2" label="Value 2"></mat-option>
+                <mat-option value="3" label="Value 3"></mat-option>
+                <mat-option value="4" label="Value 4"></mat-option>
+            </mat-dropdown>
+
+            <div class="demo-title">Full Width</div>
+            <mat-dropdown label="Select a value..." full-width>
+                <mat-option value="1" label="Value 1"></mat-option>
+                <mat-option value="2" label="Value 2"></mat-option>
+                <mat-option value="3" label="Value 3"></mat-option>
+                <mat-option value="4" label="Value 4"></mat-option>
+            </mat-dropdown>
+
+        </mat-demo>
+    </template>
+
+    <script>
+        Polymer({
+
+            // ELEMENT
+            is: 'mat-dropdown-demo'
+        });
+    </script>
+
+</dom-module>
