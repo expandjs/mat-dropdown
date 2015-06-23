@@ -17,23 +17,23 @@ It must be used in conjunction with mat-option.
 @homepage http://expandjs.com/elements/mat-dropdown
 @demo http://expandjs.com/demo/mat-dropdown
 
-@behavior xp-input-behavior http://expandjs.com/elements/xp-input-behavior
-@behavior xp-referral-behavior http://expandjs.com/elements/xp-referral-behavior
-@behavior xp-selected-behavior http://expandjs.com/elements/xp-selected-behavior
+@behavior xp-input-behavior http://expandjs.com/elements/xp-input-behavior#0.9.1
+@behavior xp-referral-behavior http://expandjs.com/elements/xp-referral-behavior#0.9.1
+@behavior xp-selected-behavior http://expandjs.com/elements/xp-selected-behavior#0.9.1
 
-@dependency polymer Polymer/polymer
-@dependency expandjs ExpandJS/expandjs
-@dependency mat-divider ExpandJS/mat-divider
-@dependency mat-icon ExpandJS/mat-icon
-@dependency mat-icons ExpandJS/mat-icons
-@dependency mat-input-decorator ExpandJS/mat-input-decorator
-@dependency mat-menu ExpandJS/mat-menu
-@dependency mat-option ExpandJS/mat-option
-@dependency xp-input-behavior ExpandJS/xp-input-behavior
-@dependency xp-referral-behavior ExpandJS/xp-referral-behavior
-@dependency xp-selected-behavior ExpandJS/xp-selected-behavior
+@dependency polymer Polymer/polymer#^1.0.4
+@dependency expandjs ExpandJS/expandjs#0.9.1
+@dependency mat-divider ExpandJS/mat-divider#0.9.1
+@dependency mat-icon ExpandJS/mat-icon#0.9.1
+@dependency mat-icons ExpandJS/mat-icons#0.9.1
+@dependency mat-input-decorator ExpandJS/mat-input-decorator#0.9.1
+@dependency mat-menu ExpandJS/mat-menu#0.9.1
+@dependency mat-option ExpandJS/mat-option#0.9.1
+@dependency xp-input-behavior ExpandJS/xp-input-behavior#0.9.1
+@dependency xp-referral-behavior ExpandJS/xp-referral-behavior#0.9.1
+@dependency xp-selected-behavior ExpandJS/xp-selected-behavior#0.9.1
 
-@devDependency mat-demo ExpandJS/mat-demo
+@devDependency mat-demo ExpandJS/mat-demo#0.9.1
 -->
 
 <link rel="import" href="../polymer/polymer.html">
@@ -63,6 +63,10 @@ It must be used in conjunction with mat-option.
         :host([full-width]) {
             display: block;
             width: auto !important;
+        }
+
+        :host ::content input {
+            display: none !important;
         }
 
         :host #matDropdownDecorator::shadow #matInputPlaceholder,
@@ -349,7 +353,7 @@ It must be used in conjunction with mat-option.
              */
             _inject: function () {
                 var self = this;
-                self._setInjected(XP.appendChild(Polymer.dom(self), XP.createElement('input', {attributes: {hidden: true, type: 'text', value: self.value}})));
+                self._setInjected(XP.appendChild(Polymer.dom(self), XP.createElement('input', {attributes: {type: 'text', value: self.value}})));
                 return self;
             },
 
@@ -397,12 +401,6 @@ It must be used in conjunction with mat-option.
 
             /*********************************************************************/
 
-            // ATTRIBUTES
-            hostAttributes: {
-                'item-selector': 'mat-option',
-                'selected-attribute': 'picked'
-            },
-
             // LISTENERS
             listeners: {
                 'items-changed': '_handleItems',
@@ -448,6 +446,20 @@ It must be used in conjunction with mat-option.
                     reflectToAttribute: true,
                     type: Boolean,
                     value: false
+                },
+
+                /**
+                 * The selector used to recognize selectable items.
+                 * TODO Temporary webcomponents polyfill's fix for `hostAttributes`.
+                 *
+                 * @attribute item-selector
+                 * @type string
+                 * @default "mat-option"
+                 */
+                itemSelector: {
+                    reflectToAttribute: true,
+                    type: String,
+                    value: 'mat-option'
                 },
 
                 /**
@@ -520,6 +532,20 @@ It must be used in conjunction with mat-option.
                     reflectToAttribute: true,
                     type: Boolean,
                     value: false
+                },
+
+                /**
+                 * The attribute set on selection.
+                 * TODO Temporary webcomponents polyfill's fix for `hostAttributes`.
+                 *
+                 * @attribute selected-attribute
+                 * @type string
+                 * @default "picked"
+                 */
+                selectedAttribute: {
+                    reflectToAttribute: true,
+                    type: String,
+                    value: 'picked'
                 }
             },
 
