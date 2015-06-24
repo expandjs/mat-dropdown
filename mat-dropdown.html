@@ -69,7 +69,6 @@ It must be used in conjunction with mat-option.
             display: none !important;
         }
 
-        :host #matDropdownDecorator::shadow #matInputPlaceholder,
         :host #matDropdownDecorator::shadow #matInputPrefix,
         :host #matDropdownDecorator::shadow #matInputSuffix,
         :host #matDropdownOptions ::content mat-option #matOptionIcon,
@@ -83,10 +82,26 @@ It must be used in conjunction with mat-option.
         }
 
         :host([full-width]) #matDropdownDecorator::shadow #matInputWrapper,
-        :host([pulldown]) #matDropdownDecorator::shadow #matInputWrapper,
-        :host #matDropdownDecorator::shadow #matInputMain {
-            margin: 0;
-            padding: 0;
+        :host([pulldown]) #matDropdownDe:host([floated]) #matDropdownDecorator::shadow #matInputPlaceholder {
+            -webkit-transform: translate3d(0, -16px, 0);
+            transform: translate3d(0, -16px, 0);
+        }
+
+        :host(:not([floated])) #matDropdownDecorator::shadow #matInputPlaceholder,
+        :host([floated][empty]:not([showed])) #matDropdownDecorator::shadow #matInputPlaceholder {
+        @apply(--mat-font-subhead);
+            line-height: 36px !important; /* override */
+            -webkit-transform: translate3d(0, 0px, 0);
+            transform: translate3d(0, 0px, 0);
+        }
+
+        :host([full-width]) #matDropdownDecorator::shadow #matInputPlaceholder,
+        :host([pulldown]) #matDropdownDecorator::shadow #matInputPlaceholder {
+            line-height: 56px !important; /* override */
+        }
+
+        :host([pulldown]) #matDropdownDecorator::shadow #matInputPlaceholder {
+            padding: 0 16px 0 24px;
         }
 
         :host #matDropdownDecorator .dummyOption {
@@ -109,7 +124,7 @@ It must be used in conjunction with mat-option.
         }
 
         :host #matDropdownPicked {
-            height: 32px;
+            height: 36px;
         }
 
         :host([full-width]) #matDropdownPicked,
@@ -175,9 +190,10 @@ It must be used in conjunction with mat-option.
 
     <template>
         <mat-input-decorator id="matDropdownDecorator" description="[[description]]" disabled="[[disabled]]"
-                             empty="[[empty]]" error="[[error]]" focused="[[focused]]" full-width="[[fullWidth]]"
-                             injected="[[injected]]" invalid="[[invalid]]" invalid-message="[[invalidMessage]]"
-                             value="[[value]]">
+                             empty="[[empty]]" error="[[error]]" floated="{{floated}}" focused="[[focused]]"
+                             floating-label="[[_hasFloatingLabel(floatingLabel, fullWidth, pulldown)]]"
+                             full-width="[[fullWidth]]" injected="[[injected]]" invalid="[[invalid]]"
+                             invalid-message="[[invalidMessage]]" label="[[label]]" value="[[value]]">
             <div id="matDropdownSpacer">
                 <div class="dummyOption">{{label}}</div>
                 <template is="dom-repeat" items="[[items]]" observe="label value">
@@ -436,6 +452,33 @@ It must be used in conjunction with mat-option.
                 },
 
                 /**
+                 * If set to true, the input's label is floated.
+                 *
+                 * @attribute floated
+                 * @type boolean
+                 * @notifies
+                 * @readonly
+                 */
+                floated: {
+                    notify: true,
+                    reflectToAttribute: true,
+                    type: Boolean
+                },
+
+                /**
+                 * If set to true, the input's label will float above the input.
+                 *
+                 * @attribute floating-label
+                 * @type boolean
+                 * @default false
+                 */
+                floatingLabel: {
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
                  * If set to true, the input is full width.
                  *
                  * @attribute full-width
@@ -566,6 +609,11 @@ It must be used in conjunction with mat-option.
                 return !!selection;
             },
 
+            // COMPUTER
+            _hasFloatingLabel: function (floatingLabel, fullWidth, pulldown) {
+                return floatingLabel && !fullWidth && !pulldown;
+            },
+
             /*********************************************************************/
 
             // LISTENER
@@ -580,8 +628,8 @@ It must be used in conjunction with mat-option.
                 var self = this;
 
                 // Setting
-                self._setPickedLabel(self.selection ? self.selection.label : self.label);
-                self._setPickedValue(self.selection ? self.selection.value : '');
+                self._setPickedLabel((self.selection && (self.selection.label || self.selection.value)) || '');
+                self._setPickedValue((self.selection && (self.selection.value)) || '');
 
                 // Observing
                 XP.onMutation(self, self.mutated.bind(self), {attributes: true, attributeFilter: ['label', 'value'], subtree: true});
