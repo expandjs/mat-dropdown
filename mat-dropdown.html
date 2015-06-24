@@ -77,7 +77,7 @@ It must be used in conjunction with mat-option.
         :host([full-width]) #matDropdownDecorator::shadow #matInputHelper,
         :host([pulldown]) #matDropdownDecorator::shadow #matInputUnderline,
         :host([pulldown]) #matDropdownDecorator::shadow #matInputHelper,
-        :host([pulldown]) #matDropdownOptions ::content mat-option[picked] {
+        :host([pulldown]) #matDropdownOptions ::content mat-option[active] {
             display: none !important;
         }
 
@@ -94,8 +94,8 @@ It must be used in conjunction with mat-option.
         }
 
         :host(:not([floated])) #matDropdownDecorator::shadow #matInputPlaceholder,
-        :host([floated][empty]:not([showed])) #matDropdownDecorator::shadow #matInputPlaceholder {
-            @apply(--mat-font-subhead);
+        :host([floated]:not([picked]):not([showed])) #matDropdownDecorator::shadow #matInputPlaceholder {
+        @apply(--mat-font-subhead);
             line-height: 36px !important; /* override */
             -webkit-transform: translate3d(0, 0px, 0);
             transform: translate3d(0, 0px, 0);
@@ -111,7 +111,7 @@ It must be used in conjunction with mat-option.
         }
 
         :host #matDropdownDecorator .dummyOption {
-            @apply(--mat-font-subhead);
+        @apply(--mat-font-subhead);
             height: 0 !important;
             overflow: hidden;
             text-overflow: ellipsis !important; /* override */
@@ -196,7 +196,7 @@ It must be used in conjunction with mat-option.
 
     <template>
         <mat-input-decorator id="matDropdownDecorator" description="[[description]]" disabled="[[disabled]]"
-                             empty="[[empty]]" error="[[error]]" floated="{{floated}}" focused="[[focused]]"
+                             empty="[[!picked]]" error="[[error]]" floated="{{floated}}" focused="[[focused]]"
                              floating-label="[[_hasFloatingLabel(floatingLabel, fullWidth, pulldown)]]"
                              full-width="[[fullWidth]]" injected="[[injected]]" invalid="[[invalid]]"
                              invalid-message="[[invalidMessage]]" label="[[label]]" value="[[value]]">
@@ -283,14 +283,13 @@ It must be used in conjunction with mat-option.
                 // Asserting
                 XP.assertArgument(XP.isVoid(value) || XP.isString(value), 1, 'string');
 
-                // Vars
-                var self       = this,
-                    filter     = function (item) { return item.value === value || (!item.value && !value); },
-                    isSelected = self.selection && self.selection.value === value,
-                    option     = isSelected ? null : XP.find(self.items || [], filter);
-
                 // Checking
-                if (isSelected) { return option; }
+                if (this.selection && this.selection.value === value) { return this.selection; }
+
+                // Vars
+                var self   = this,
+                    filter = function (item) { return item.getAttribute('value') === value || ''; },
+                    option = XP.find(self.items || [], filter) || null;
 
                 // Selecting
                 if (self.selection) { self.unselect(self.selection); }
@@ -584,20 +583,6 @@ It must be used in conjunction with mat-option.
                 },
 
                 /**
-                 * The attribute set on selection.
-                 * TODO Temporary webcomponents polyfill's fix for `hostAttributes`.
-                 *
-                 * @attribute selected-attribute
-                 * @type string
-                 * @default "picked"
-                 */
-                selectedAttribute: {
-                    reflectToAttribute: true,
-                    type: String,
-                    value: 'picked'
-                },
-
-                /**
                  * If set to true, the overlay is showed.
                  *
                  * @attribute showed
@@ -653,7 +638,7 @@ It must be used in conjunction with mat-option.
                 self._setPickedValue((self.selection && (self.selection.value)) || '');
 
                 // Observing
-                XP.onMutation(self, self.mutated.bind(self), {attributes: true, attributeFilter: ['label', 'value'], subtree: true});
+                XP.onMutation(self, self.mutated.bind(self), {attributes: true, attributeFilter: ['active', 'label', 'value'], subtree: true});
             },
 
             /*********************************************************************/
@@ -670,7 +655,7 @@ It must be used in conjunction with mat-option.
 
             // HANDLER
             _handleSelection: function () {
-                this.value = (this.selection && this.selection.value) || '';
+                if (this.selection) { this.value = this.selection.value || ''; }
             },
 
             // HANDLER
