@@ -82,14 +82,20 @@ It must be used in conjunction with mat-option.
         }
 
         :host([full-width]) #matDropdownDecorator::shadow #matInputWrapper,
-        :host([pulldown]) #matDropdownDe:host([floated]) #matDropdownDecorator::shadow #matInputPlaceholder {
+        :host([pulldown]) #matDropdownDecorator::shadow #matInputWrapper,
+        :host #matDropdownDecorator::shadow #matInputMain {
+            margin: 0;
+            padding: 0;
+        }
+
+        :host([floated]) #matDropdownDecorator::shadow #matInputPlaceholder {
             -webkit-transform: translate3d(0, -16px, 0);
             transform: translate3d(0, -16px, 0);
         }
 
         :host(:not([floated])) #matDropdownDecorator::shadow #matInputPlaceholder,
         :host([floated][empty]:not([showed])) #matDropdownDecorator::shadow #matInputPlaceholder {
-        @apply(--mat-font-subhead);
+            @apply(--mat-font-subhead);
             line-height: 36px !important; /* override */
             -webkit-transform: translate3d(0, 0px, 0);
             transform: translate3d(0, 0px, 0);
@@ -203,7 +209,7 @@ It must be used in conjunction with mat-option.
             <mat-option id="matDropdownPicked" disabled="[[disabled]]" label="[[pickedLabel]]"
                         secondary-icon="[[_computeArrowIcon(singleItem, picked)]]" value="[[pickedValue]]"
                         on-blur="_blurHandler" on-focus="_focusHandler" on-xp-activate="_handleShow"></mat-option>
-            <mat-menu id="matDropdownMenu" background="[[background]]" target="[[self.$.matDropdownPicked]]">
+            <mat-menu id="matDropdownMenu" background="[[background]]" showed="{{showed}}" target="[[self.$.matDropdownPicked]]">
                 <mat-icon id="matDropdownUp" name="navigation:arrow-drop-up" opacity="hint"></mat-icon>
                 <mat-option id="matDropdownFirst" label="[[selection.label]]" value="[[selection.value]]"></mat-option>
                 <mat-divider id="matDropdownDivider" cap></mat-divider>
@@ -589,6 +595,21 @@ It must be used in conjunction with mat-option.
                     reflectToAttribute: true,
                     type: String,
                     value: 'picked'
+                },
+
+                /**
+                 * If set to true, the overlay is showed.
+                 *
+                 * @attribute showed
+                 * @type boolean
+                 * @default false
+                 * @notifies
+                 */
+                showed: {
+                    notify: true,
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
                 }
             },
 
