@@ -22,18 +22,18 @@ It must be used in conjunction with mat-option.
 @behavior xp-selected-behavior http://expandjs.com/elements/xp-selected-behavior
 
 @dependency polymer Polymer/polymer#^1.0.0
-@dependency expandjs ExpandJS/expandjs#0.9.1
-@dependency mat-divider ExpandJS/mat-divider#0.9.1
-@dependency mat-icon ExpandJS/mat-icon#0.9.1
-@dependency mat-icons ExpandJS/mat-icons#0.9.1
-@dependency mat-input-decorator ExpandJS/mat-input-decorator#0.9.1
-@dependency mat-menu ExpandJS/mat-menu#0.9.1
-@dependency mat-option ExpandJS/mat-option#0.9.1
-@dependency xp-input-behavior ExpandJS/xp-input-behavior#0.9.1
-@dependency xp-referral-behavior ExpandJS/xp-referral-behavior#0.9.1
-@dependency xp-selected-behavior ExpandJS/xp-selected-behavior#0.9.1
+@dependency expandjs ExpandJS/expandjs#0.9.2
+@dependency mat-divider ExpandJS/mat-divider#0.9.2
+@dependency mat-icon ExpandJS/mat-icon#0.9.2
+@dependency mat-icons ExpandJS/mat-icons#0.9.2
+@dependency mat-input-decorator ExpandJS/mat-input-decorator#0.9.2
+@dependency mat-menu ExpandJS/mat-menu#0.9.2
+@dependency mat-option ExpandJS/mat-option#0.9.2
+@dependency xp-input-behavior ExpandJS/xp-input-behavior#0.9.2
+@dependency xp-referral-behavior ExpandJS/xp-referral-behavior#0.9.2
+@dependency xp-selected-behavior ExpandJS/xp-selected-behavior#0.9.2
 
-@devDependency mat-demo ExpandJS/mat-demo#0.9.1
+@devDependency mat-demo ExpandJS/mat-demo#0.9.2
 -->
 
 <link rel="import" href="../polymer/polymer.html">
@@ -62,6 +62,7 @@ It must be used in conjunction with mat-option.
 
         :host([full-width]) {
             display: block;
+            margin: 0;
             width: auto !important;
         }
 
@@ -106,7 +107,18 @@ It must be used in conjunction with mat-option.
             line-height: 56px !important; /* override */
         }
 
-        :host([pulldown]) #matDropdownDecorator::shadow #matInputPlaceholder {
+        :host #matDropdownDecorator::shadow #matInputPlaceholder,
+        :host #matDropdownPicked::shadow #matOptionMain {
+            padding: 0;
+        }
+
+        :host([full-width]) #matDropdownDecorator::shadow #matInputPlaceholder,
+        :host([full-width]) #matDropdownPicked::shadow #matOptionMain {
+            padding: 0 16px;
+        }
+
+        :host([pulldown]) #matDropdownDecorator::shadow #matInputPlaceholder,
+        :host([pulldown]) #matDropdownPicked::shadow #matOptionMain {
             padding: 0 16px 0 24px;
         }
 
@@ -136,14 +148,6 @@ It must be used in conjunction with mat-option.
         :host([full-width]) #matDropdownPicked,
         :host([pulldown]) #matDropdownPicked {
             height: 56px;
-        }
-
-        :host #matDropdownPicked::shadow #matOptionMain {
-            padding: 0;
-        }
-
-        :host([pulldown]) #matDropdownPicked::shadow #matOptionMain {
-            padding: 0 16px 0 24px;
         }
 
         :host(:not([picked])) #matDropdownPicked::shadow #matOptionWrapper[foreground="dark"] #matOptionLabel {
@@ -191,6 +195,20 @@ It must be used in conjunction with mat-option.
         :host([pulldown][picked]) #matDropdownOptions ::content mat-option {
             height: 32px;
             margin: 0;
+        }
+
+        /* TABLET */
+
+        @media (min-width: 960px) {
+
+            :host([full-width]) {
+                margin: 0;
+            }
+
+            :host([full-width]) #matDropdownDecorator::shadow #matInputPlaceholder,
+            :host([full-width]) #matDropdownPicked::shadow #matOptionMain {
+                padding: 0 24px;
+            }
         }
     </style>
 
@@ -280,18 +298,17 @@ It must be used in conjunction with mat-option.
              */
             pick: function (value) {
 
-                // Asserting
-                XP.assertArgument(XP.isVoid(value) || XP.isString(value), 1, 'string');
-
-                // Checking
-                if (this.selection && this.selection.value === value) { return this.selection; }
-
                 // Vars
                 var self   = this,
-                    filter = function (item) { return item.getAttribute('value') === value || ''; },
-                    option = XP.find(self.items || [], filter) || null;
+                    test   = value === 0 ? '0' : value || '',
+                    filter = function (item) { console.log(item.getAttribute('value'), item); return item.getAttribute('value') === test; },
+                    picked = self.selection && self.selection.value === test,
+                    option = picked ? self.selection : XP.find(self.items || [], filter) || null;
 
-                // Selecting
+                // Checking
+                if (picked) { return option; }
+
+                // Picking
                 if (self.selection) { self.unselect(self.selection); }
                 if (option) { self.select(option); }
 
@@ -498,6 +515,7 @@ It must be used in conjunction with mat-option.
 
                 /**
                  * The selector used to recognize selectable items.
+                 *
                  * TODO Temporary webcomponents polyfill's fix for `hostAttributes`.
                  *
                  * @attribute item-selector
