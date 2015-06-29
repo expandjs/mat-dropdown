@@ -514,6 +514,21 @@ It must be used in conjunction with mat-option.
                 },
 
                 /**
+                 * The attribute used as index.
+                 *
+                 * TODO Temporary webcomponents polyfill's fix for `hostAttributes`.
+                 *
+                 * @attribute index-attribute
+                 * @type string
+                 * @default "value"
+                 */
+                indexAttribute: {
+                    reflectToAttribute: true,
+                    type: String,
+                    value: 'value'
+                },
+
+                /**
                  * The selector used to recognize selectable items.
                  *
                  * TODO Temporary webcomponents polyfill's fix for `hostAttributes`.
