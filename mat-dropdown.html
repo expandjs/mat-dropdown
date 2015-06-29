@@ -301,7 +301,7 @@ It must be used in conjunction with mat-option.
                 // Vars
                 var self   = this,
                     test   = value === 0 ? '0' : value || '',
-                    filter = function (item) { console.log(item.getAttribute('value'), item); return item.getAttribute('value') === test; },
+                    filter = function (item) { return item.getAttribute('value') === test; },
                     picked = self.selection && self.selection.value === test,
                     option = picked ? self.selection : XP.find(self.items || [], filter) || null;
 
