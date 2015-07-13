@@ -17,23 +17,24 @@ It must be used in conjunction with mat-option.
 @homepage http://expandjs.com/elements/mat-dropdown
 @demo http://expandjs.com/demo/mat-dropdown
 
+@wraps mat-input-decorator http://expandjs.com/elements/mat-input-decorator
 @behavior xp-input-behavior http://expandjs.com/elements/xp-input-behavior
 @behavior xp-referral-behavior http://expandjs.com/elements/xp-referral-behavior
 @behavior xp-selected-behavior http://expandjs.com/elements/xp-selected-behavior
 
 @dependency polymer Polymer/polymer#^1.0.0
-@dependency expandjs ExpandJS/expandjs#0.9.3
-@dependency mat-divider ExpandJS/mat-divider#0.9.3
-@dependency mat-icon ExpandJS/mat-icon#0.9.3
-@dependency mat-icons ExpandJS/mat-icons#0.9.3
-@dependency mat-input-decorator ExpandJS/mat-input-decorator#0.9.3
-@dependency mat-menu ExpandJS/mat-menu#0.9.3
-@dependency mat-option ExpandJS/mat-option#0.9.3
-@dependency xp-input-behavior ExpandJS/xp-input-behavior#0.9.3
-@dependency xp-referral-behavior ExpandJS/xp-referral-behavior#0.9.3
-@dependency xp-selected-behavior ExpandJS/xp-selected-behavior#0.9.3
+@dependency expandjs ExpandJS/expandjs#0.9.4
+@dependency mat-divider ExpandJS/mat-divider#0.9.4
+@dependency mat-icon ExpandJS/mat-icon#0.9.4
+@dependency mat-icons ExpandJS/mat-icons#0.9.4
+@dependency mat-input-decorator ExpandJS/mat-input-decorator#0.9.4
+@dependency mat-menu ExpandJS/mat-menu#0.9.4
+@dependency mat-option ExpandJS/mat-option#0.9.4
+@dependency xp-input-behavior ExpandJS/xp-input-behavior#0.9.4
+@dependency xp-referral-behavior ExpandJS/xp-referral-behavior#0.9.4
+@dependency xp-selected-behavior ExpandJS/xp-selected-behavior#0.9.4
 
-@devDependency mat-demo ExpandJS/mat-demo#0.9.3
+@devDependency mat-demo ExpandJS/mat-demo#0.9.4
 -->
 
 <link rel="import" href="../polymer/polymer.html">
@@ -52,12 +53,16 @@ It must be used in conjunction with mat-option.
 
     <style>
         :host {
-            display: inline-block;
+            display: block;
             overflow: visible;
         }
 
         :host([empty-items]) {
             display: none !important;
+        }
+
+        :host([inline]) {
+            display: inline-block;
         }
 
         :host([full-width]) {
@@ -212,7 +217,7 @@ It must be used in conjunction with mat-option.
         <mat-input-decorator id="matDropdownDecorator" description="[[description]]" disabled="[[disabled]]"
                              empty="[[!picked]]" error="[[error]]" floated="{{floated}}" focused="[[focused]]"
                              floating-label="[[_hasFloatingLabel(floatingLabel, fullWidth, pulldown)]]"
-                             full-width="[[fullWidth]]" injected="[[injected]]" invalid="[[invalid]]"
+                             full-width="[[fullWidth]]" input="[[input]]" invalid="[[invalid]]"
                              invalid-message="[[invalidMessage]]" label="[[label]]" value="[[value]]">
             <div id="matDropdownSpacer">
                 <div class="dummyOption">{{label}}</div>
@@ -220,9 +225,7 @@ It must be used in conjunction with mat-option.
                     <div class="dummyOption">{{_computeLabel(item.label, item.value)}}</div>
                 </template>
             </div>
-            <mat-option id="matDropdownPicked" disabled="[[disabled]]" label="[[pickedLabel]]"
-                        secondary-icon="[[_computeArrowIcon(singleItem, picked)]]" value="[[pickedValue]]"
-                        on-blur="_blurHandler" on-focus="_focusHandler" on-xp-activate="_handleShow"></mat-option>
+            <mat-option id="matDropdownPicked" disabled="[[disabled]]" label="[[pickedLabel]]" secondary-icon="[[_computeArrowIcon(singleItem, picked)]]" value="[[pickedValue]]" on-blur="_blurHandler" on-focus="_focusHandler" on-xp-activate="_handleShow"></mat-option>
             <mat-menu id="matDropdownMenu" background="[[background]]" showed="{{showed}}" target="[[self.$.matDropdownPicked]]">
                 <mat-icon id="matDropdownUp" name="navigation:arrow-drop-up" opacity="hint"></mat-icon>
                 <mat-option id="matDropdownFirst" label="[[selection.label]]" value="[[selection.value]]"></mat-option>
@@ -296,19 +299,18 @@ It must be used in conjunction with mat-option.
 
                 // Vars
                 var self   = this,
-                    test   = value === 0 ? '0' : value || '',
-                    filter = function (item) { return item.getAttribute('value') === test; },
-                    picked = self.selection && self.selection.value === test,
-                    option = picked ? self.selection : XP.find(self.items || [], filter) || null;
+                    casted = value === 0 ? '0' : value || '',
+                    picked = self.selection && self.selection.value === casted,
+                    item   = picked ? self.selection : self.findItem(function (item) { return item.getAttribute('value') === casted; });
 
                 // Checking
-                if (picked) { return option; }
+                if (picked) { return item; }
 
                 // Picking
-                if (self.selection) { self.unselect(self.selection); }
-                if (option) { self.select(option); }
+                if (self.selection) { self.unselect(self.selection, true, true); }
+                if (item) { self.select(item, true); }
 
-                return option;
+                return item;
             },
 
             /**
@@ -346,7 +348,7 @@ It must be used in conjunction with mat-option.
              */
             _commitFrom: function () {
                 var self = this;
-                self.value = self.injected.value;
+                self.value = self.input.value;
                 return self;
             },
 
@@ -359,7 +361,7 @@ It must be used in conjunction with mat-option.
              */
             _commitTo: function () {
                 var self = this;
-                if (self.value !== self.injected.value) { self.injected.value = self.value; }
+                if (self.value !== self.input.value) { self.input.value = self.value; }
                 return self;
             },
 
@@ -387,7 +389,7 @@ It must be used in conjunction with mat-option.
              */
             _inject: function () {
                 var self = this;
-                self._setInjected(XP.appendChild(Polymer.dom(self), XP.createElement('input', {attributes: {type: 'text', value: self.value}})));
+                self._setInput(XP.appendChild(Polymer.dom(self), XP.createElement('input', {attributes: {type: 'text', value: self.value}})));
                 return self;
             },
 
@@ -413,9 +415,9 @@ It must be used in conjunction with mat-option.
              */
             _update: function () {
                 var self = this;
-                XP.setAttribute(self.injected, 'disabled', self.disabled);
-                XP.setAttribute(self.injected, 'name', self.name);
-                XP.setAttribute(self.injected, 'required', self.required);
+                XP.setAttribute(self.input, 'disabled', self.disabled);
+                XP.setAttribute(self.input, 'name', self.name);
+                XP.setAttribute(self.input, 'required', self.required);
                 return self;
             },
 
@@ -428,8 +430,8 @@ It must be used in conjunction with mat-option.
              */
             _validate: function () {
                 var self = this;
-                self._setInvalid(self.injected.validity.valid !== true);
-                self._setInvalidMessage(self.injected.validationMessage || null);
+                self._setInvalid(self.input.validity.valid !== true);
+                self._setInvalidMessage(self.input.validationMessage || null);
                 return self;
             },
 
@@ -522,6 +524,19 @@ It must be used in conjunction with mat-option.
                     reflectToAttribute: true,
                     type: String,
                     value: 'value'
+                },
+
+                /**
+                 * If set to true, the input is inline.
+                 *
+                 * @attribute inline
+                 * @type boolean
+                 * @default false
+                 */
+                inline: {
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
                 },
 
                 /**
