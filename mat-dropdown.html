@@ -367,6 +367,28 @@ It must be used in conjunction with mat-option.
             },
 
             /**
+             * Returns an option's label.
+             *
+             * @method _getLabel
+             * @param {Element} option
+             * @returns {string}
+             */
+            _getLabel: function (option) {
+                return option && XP.isString(option.label || option.value) ? option.label || option.value : '';
+            },
+
+            /**
+             * Returns an option's value.
+             *
+             * @method _getValue
+             * @param {Element} option
+             * @returns {number | string}
+             */
+            _getValue: function (option) {
+                return option && (XP.isFinite(option.value) || XP.isString(option.value)) ? option.value : '';
+            },
+
+            /**
              * Indexes the input.
              *
              * @method _index
@@ -440,9 +462,9 @@ It must be used in conjunction with mat-option.
 
             // LISTENERS
             listeners: {
-                'items-changed': '_handleItems',
+                'items-changed': '_handlePick',
                 'selection-changed': '_handleSelection',
-                'value-changed': '_handleValue'
+                'value-changed': '_handlePick'
             },
 
             // PROPERTIES
@@ -679,8 +701,8 @@ It must be used in conjunction with mat-option.
                 var self = this;
 
                 // Setting
-                self._setPickedLabel((self.selection && (self.selection.label || self.selection.value)) || '');
-                self._setPickedValue((self.selection && (self.selection.value)) || '');
+                self._setPickedLabel(self._getLabel(self.selection));
+                self._setPickedValue(self._getValue(self.value));
 
                 // Observing
                 XP.onMutation(self, self.mutated.bind(self), {attributes: true, attributeFilter: ['active', 'label', 'value'], subtree: true});
@@ -694,24 +716,19 @@ It must be used in conjunction with mat-option.
             },
 
             // HANDLER
-            _handleItems: function () {
+            _handlePick: function () {
                 this.pick(this.value);
             },
 
             // HANDLER
             _handleSelection: function () {
-                if (this.selection) { this.value = this.selection.value || ''; }
+                if (this.selection) { this.value = this._getValue(this.selection); }
             },
 
             // HANDLER
             _handleShow: function (event) {
                 event.stopPropagation();
                 this.show();
-            },
-
-            // HANDLER
-            _handleValue: function () {
-                this.pick(this.value);
             }
         });
     </script>
