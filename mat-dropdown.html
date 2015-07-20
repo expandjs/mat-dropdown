@@ -347,6 +347,7 @@ It must be used in conjunction with mat-option.
              * @method _getLabel
              * @param {Element} option
              * @returns {string}
+             * @private
              */
             _getLabel: function (option) {
                 return option && XP.isString(option.label || option.value) ? option.label || option.value : '';
@@ -358,6 +359,7 @@ It must be used in conjunction with mat-option.
              * @method _getValue
              * @param {Element} option
              * @returns {number | string}
+             * @private
              */
             _getValue: function (option) {
                 return option && XP.isAlphanumeric(option.value) ? option.value : '';
