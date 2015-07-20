@@ -290,31 +290,6 @@ It must be used in conjunction with mat-option.
             },
 
             /**
-             * Picks an option.
-             *
-             * @method pick
-             * @param {string} [value = ""]
-             * @returns {Element}
-             */
-            pick: function (value) {
-
-                // Vars
-                var self   = this,
-                    casted = value === 0 ? '0' : value || '',
-                    picked = self.selection && self.selection.value === casted,
-                    item   = picked ? self.selection : self.findItem(function (item) { return item.getAttribute('value') === casted; });
-
-                // Checking
-                if (picked) { return item; }
-
-                // Picking
-                if (self.selection) { self.unselect(self.selection, true, true); }
-                if (item) { self.select(item, true); }
-
-                return item;
-            },
-
-            /**
              * Shows the dropdown.
              *
              * @method show
@@ -385,7 +360,7 @@ It must be used in conjunction with mat-option.
              * @returns {number | string}
              */
             _getValue: function (option) {
-                return option && (XP.isFinite(option.value) || XP.isString(option.value)) ? option.value : '';
+                return option && XP.isAlphanumeric(option.value) ? option.value : '';
             },
 
             /**
@@ -462,9 +437,9 @@ It must be used in conjunction with mat-option.
 
             // LISTENERS
             listeners: {
-                'items-changed': '_handlePick',
+                'items-changed': '_handleValue',
                 'selection-changed': '_handleSelection',
-                'value-changed': '_handlePick'
+                'value-changed': '_handleValue'
             },
 
             // PROPERTIES
@@ -716,11 +691,6 @@ It must be used in conjunction with mat-option.
             },
 
             // HANDLER
-            _handlePick: function () {
-                this.pick(this.value);
-            },
-
-            // HANDLER
             _handleSelection: function () {
                 if (this.selection) { this.value = this._getValue(this.selection); }
             },
@@ -729,6 +699,23 @@ It must be used in conjunction with mat-option.
             _handleShow: function (event) {
                 event.stopPropagation();
                 this.show();
+            },
+
+            // HANDLER
+            _handleValue: function () {
+
+                // Vars
+                var self   = this,
+                    string = XP.isAlphanumeric(self.value) ? self.value.toString() : '',
+                    picked = self.selection && self.selection.value.toString() === string,
+                    item   = picked ? self.selection : self.findItem(function (item) { return item.getAttribute('value') === string; });
+
+                // Checking
+                if (picked) { return item; }
+
+                // Picking
+                if (self.selection) { self.unselect(self.selection, true, true); }
+                if (item) { self.select(item, true); }
             }
         });
     </script>
