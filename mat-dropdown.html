@@ -101,7 +101,7 @@ It must be used in conjunction with mat-option.
         }
 
         :host(:not([floated])) #matDropdownDecorator::shadow #matInputPlaceholder,
-        :host([floated]:not([picked]):not([showed])) #matDropdownDecorator::shadow #matInputPlaceholder {
+        :host([floated][empty-selection]:not([showed])) #matDropdownDecorator::shadow #matInputPlaceholder {
         @apply(--mat-font-subhead);
             line-height: 36px !important; /* override */
             -webkit-transform: translate3d(0, 0px, 0);
@@ -156,11 +156,11 @@ It must be used in conjunction with mat-option.
             height: 56px;
         }
 
-        :host(:not([picked])) #matDropdownPicked::shadow #matOptionWrapper[foreground="dark"] #matOptionLabel {
+        :host([empty-selection]) #matDropdownPicked::shadow #matOptionWrapper[foreground="dark"] #matOptionLabel {
             opacity: 0.44;
         }
 
-        :host(:not([picked])) #matDropdownPicked::shadow #matOptionWrapper[foreground="light"] #matOptionLabel {
+        :host([empty-selection]) #matDropdownPicked::shadow #matOptionWrapper[foreground="light"] #matOptionLabel {
             opacity: 0.30;
         }
 
@@ -174,8 +174,8 @@ It must be used in conjunction with mat-option.
             display: none !important;
         }
 
-        :host(:not([pulldown])) #matDropdownFirst,
-        :host(:not([picked])) #matDropdownFirst {
+        :host([empty-selection]) #matDropdownFirst,
+        :host(:not([pulldown])) #matDropdownFirst {
             display: none !important;
         }
 
@@ -194,7 +194,7 @@ It must be used in conjunction with mat-option.
         }
 
         :host([pulldown]) #matDropdownOptions ::content mat-option + mat-option,
-        :host([pulldown][picked]) #matDropdownOptions ::content mat-option {
+        :host([pulldown]:not([empty-selection])) #matDropdownOptions ::content mat-option {
             height: 32px;
             margin: 0;
         }
@@ -216,7 +216,7 @@ It must be used in conjunction with mat-option.
 
     <template>
         <mat-input-decorator id="matDropdownDecorator" description="[[description]]" disabled="[[disabled]]"
-                             empty="[[!picked]]" error="[[error]]" floated="{{floated}}" focused="[[focused]]"
+                             empty="[[emptySelection]]" error="[[error]]" floated="{{floated}}" focused="[[focused]]"
                              floating-label="[[_hasFloatingLabel(floatingLabel, fullWidth, pulldown)]]"
                              full-width="[[fullWidth]]" input="[[input]]" invalid="[[invalid]]"
                              invalid-message="[[invalidMessage]]" label="[[label]]" value="[[value]]">
@@ -226,7 +226,7 @@ It must be used in conjunction with mat-option.
                     <div class="dummyOption">{{_computeLabel(item.label, item.value)}}</div>
                 </template>
             </div>
-            <mat-option id="matDropdownPicked" disabled="[[disabled]]" label="[[pickedLabel]]" secondary-icon="[[_computeArrowIcon(singleItem, picked)]]" value="[[pickedValue]]" on-blur="_blurHandler" on-focus="_focusHandler" on-xp-activate="_handleShow"></mat-option>
+            <mat-option id="matDropdownPicked" disabled="[[disabled]]" label="[[selectedLabel]]" secondary-icon="[[_computeArrowIcon(emptySelection, singleItem)]]" value="[[selectedValue]]" on-blur="_blurHandler" on-focus="_focusHandler" on-xp-activate="_handleShow"></mat-option>
             <mat-menu id="matDropdownMenu" background="[[background]]" showed="{{showed}}" target="[[self.$.matDropdownPicked]]">
                 <mat-icon id="matDropdownUp" name="navigation:arrow-drop-up" opacity="hint"></mat-icon>
                 <mat-option id="matDropdownFirst" label="[[selection.label]]" value="[[selection.value]]"></mat-option>
@@ -555,52 +555,6 @@ It must be used in conjunction with mat-option.
                 },
 
                 /**
-                 * If set to true, an option is picked.
-                 *
-                 * @attribute picked
-                 * @type boolean
-                 * @notifies
-                 * @readonly
-                 */
-                picked: {
-                    computed: '_computePicked(selection)',
-                    notify: true,
-                    reflectToAttribute: true,
-                    type: Boolean
-                },
-
-                /**
-                 * The picked option's label.
-                 *
-                 * @attribute picked-label
-                 * @type string
-                 * @notifies
-                 * @readonly
-                 */
-                pickedLabel: {
-                    notify: true,
-                    readOnly: true,
-                    type: String,
-                    value: null
-                },
-
-                /**
-                 * The picked option's value.
-                 *
-                 * @attribute picked-value
-                 * @type string
-                 * @default ""
-                 * @notifies
-                 * @readonly
-                 */
-                pickedValue: {
-                    notify: true,
-                    readOnly: true,
-                    type: String,
-                    value: ''
-                },
-
-                /**
                  * If set to true, the selected option is always on top.
                  *
                  * @attribute pulldown
@@ -627,6 +581,37 @@ It must be used in conjunction with mat-option.
                 },
 
                 /**
+                 * The selected option's label.
+                 *
+                 * @attribute selected-label
+                 * @type string
+                 * @notifies
+                 * @readonly
+                 */
+                selectedLabel: {
+                    notify: true,
+                    readOnly: true,
+                    type: String,
+                    value: null
+                },
+
+                /**
+                 * The selected option's value.
+                 *
+                 * @attribute selected-value
+                 * @type string
+                 * @default ""
+                 * @notifies
+                 * @readonly
+                 */
+                selectedValue: {
+                    notify: true,
+                    readOnly: true,
+                    type: String,
+                    value: ''
+                },
+
+                /**
                  * If set to true, the overlay is showed.
                  *
                  * @attribute showed
@@ -645,18 +630,13 @@ It must be used in conjunction with mat-option.
             /*********************************************************************/
 
             // COMPUTER
-            _computeArrowIcon: function (singleItem, selected) {
-                return !singleItem || !selected ? 'navigation:arrow-drop-down' : null;
+            _computeArrowIcon: function (emptySelection, singleItem) {
+                return emptySelection || !singleItem ? 'navigation:arrow-drop-down' : null;
             },
 
             // COMPUTER
             _computeLabel: function (label, value) {
                 return label || value;
-            },
-
-            // COMPUTER
-            _computePicked: function (selection) {
-                return !!selection;
             },
 
             // COMPUTER
@@ -678,8 +658,8 @@ It must be used in conjunction with mat-option.
                 var self = this;
 
                 // Setting
-                self._setPickedLabel(self._getLabel(self.selection));
-                self._setPickedValue(self._getValue(self.value));
+                self._setSelectedLabel(self._getLabel(self.selection));
+                self._setSelectedValue(self._getValue(self.value));
 
                 // Observing
                 XP.onMutation(self, self.mutated.bind(self), {attributes: true, attributeFilter: ['active', 'label', 'value'], subtree: true});
@@ -707,13 +687,13 @@ It must be used in conjunction with mat-option.
             _handleValue: function () {
 
                 // Vars
-                var self   = this,
-                    string = XP.isAlphanumeric(self.value) ? self.value.toString() : '',
-                    picked = self.selection && self.selection.value.toString() === string,
-                    item   = picked ? self.selection : self.findItem(function (item) { return item.getAttribute('value') === string; });
+                var self     = this,
+                    string   = XP.isAlphanumeric(self.value) ? self.value.toString() : '',
+                    selected = self.selection && self.selection.value.toString() === string,
+                    item     = selected ? self.selection : self.findItem(function (item) { return item.getAttribute('value') === string; });
 
                 // Checking
-                if (picked) { return item; }
+                if (selected) { return item; }
 
                 // Picking
                 if (self.selection) { self.unselect(self.selection, true, true); }
