@@ -18,24 +18,24 @@ It must be used in conjunction with mat-option.
 @homepage http://expandjs.com/elements/mat-dropdown
 @demo http://expandjs.com/demo/mat-dropdown
 
-@wraps mat-input-decorator http://expandjs.com/elements/mat-input-decorator
-@behavior xp-input-behavior http://expandjs.com/elements/xp-input-behavior
-@behavior xp-referral-behavior http://expandjs.com/elements/xp-referral-behavior
-@behavior xp-selected-behavior http://expandjs.com/elements/xp-selected-behavior
+@adapts mat-input-decorator /bower_components/mat-input-decorator/mat-input-decorator.html
+@behavior xp-input-behavior /bower_components/xp-input-behavior/xp-input-behavior.html
+@behavior xp-referral-behavior /bower_components/xp-referral-behavior/xp-referral-behavior.html
+@behavior xp-selected-behavior /bower_components/xp-selected-behavior/xp-selected-behavior.html
 
 @dependency polymer Polymer/polymer#^1.0.0
-@dependency expandjs ExpandJS/expandjs#0.9.4
-@dependency mat-divider ExpandJS/mat-divider#0.9.4
-@dependency mat-icon ExpandJS/mat-icon#0.9.4
-@dependency mat-icons ExpandJS/mat-icons#0.9.4
-@dependency mat-input-decorator ExpandJS/mat-input-decorator#0.9.4
-@dependency mat-menu ExpandJS/mat-menu#0.9.4
-@dependency mat-option ExpandJS/mat-option#0.9.4
-@dependency xp-input-behavior ExpandJS/xp-input-behavior#0.9.4
-@dependency xp-referral-behavior ExpandJS/xp-referral-behavior#0.9.4
-@dependency xp-selected-behavior ExpandJS/xp-selected-behavior#0.9.4
+@dependency expandjs ExpandJS/expandjs#0.9.5
+@dependency mat-divider ExpandJS/mat-divider#0.9.5
+@dependency mat-icon ExpandJS/mat-icon#0.9.5
+@dependency mat-icons ExpandJS/mat-icons#0.9.5
+@dependency mat-input-decorator ExpandJS/mat-input-decorator#0.9.5
+@dependency mat-menu ExpandJS/mat-menu#0.9.5
+@dependency mat-option ExpandJS/mat-option#0.9.5
+@dependency xp-input-behavior ExpandJS/xp-input-behavior#0.9.5
+@dependency xp-referral-behavior ExpandJS/xp-referral-behavior#0.9.5
+@dependency xp-selected-behavior ExpandJS/xp-selected-behavior#0.9.5
 
-@devDependency mat-demo ExpandJS/mat-demo#0.9.4
+@devDependency mat-demo ExpandJS/mat-demo#0.9.5
 -->
 
 <link rel="import" href="../polymer/polymer.html">
@@ -514,8 +514,6 @@ It must be used in conjunction with mat-option.
                 /**
                  * The attribute used as index.
                  *
-                 * TODO Temporary webcomponents polyfill's fix for `hostAttributes`.
-                 *
                  * @attribute index-attribute
                  * @type string
                  * @default "value"
@@ -541,8 +539,6 @@ It must be used in conjunction with mat-option.
 
                 /**
                  * The selector used to recognize selectable items.
-                 *
-                 * TODO Temporary webcomponents polyfill's fix for `hostAttributes`.
                  *
                  * @attribute item-selector
                  * @type string
@@ -659,7 +655,7 @@ It must be used in conjunction with mat-option.
 
                 // Setting
                 self._setSelectedLabel(self._getLabel(self.selection));
-                self._setSelectedValue(self._getValue(self.value));
+                self._setSelectedValue(self._getValue(self.selection));
 
                 // Observing
                 XP.onMutation(self, self.mutated.bind(self), {attributes: true, attributeFilter: ['active', 'label', 'value'], subtree: true});
