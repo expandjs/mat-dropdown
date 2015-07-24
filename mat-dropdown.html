@@ -19,7 +19,6 @@ It must be used in conjunction with mat-option.
 @repository https://github.com/ExpandJS/mat-dropdown
 @demo http://expandjs.com/demo/mat-dropdown
 
-@adapts mat-input-decorator /bower_components/mat-input-decorator/mat-input-decorator.html
 @behavior xp-input-behavior /bower_components/xp-input-behavior/xp-input-behavior.html
 @behavior xp-referral-behavior /bower_components/xp-referral-behavior/xp-referral-behavior.html
 @behavior xp-selected-behavior /bower_components/xp-selected-behavior/xp-selected-behavior.html
@@ -219,7 +218,7 @@ It must be used in conjunction with mat-option.
         <mat-input-decorator id="matDropdownDecorator" description="[[description]]" disabled="[[disabled]]"
                              empty="[[emptySelection]]" error="[[error]]" floated="{{floated}}" focused="[[focused]]"
                              floating-label="[[_hasFloatingLabel(floatingLabel, fullWidth, pulldown)]]"
-                             full-width="[[fullWidth]]" input="[[input]]" invalid="[[invalid]]"
+                             full-width="[[fullWidth]]" input="[[adaptee]]" invalid="[[invalid]]"
                              invalid-message="[[invalidMessage]]" label="[[label]]" value="[[value]]">
             <div id="matDropdownSpacer">
                 <div class="dummyOption">{{label}}</div>
@@ -317,7 +316,20 @@ It must be used in conjunction with mat-option.
             /*********************************************************************/
 
             /**
-             * Commits from input's value.
+             * Set the adaptee.
+             *
+             * @method _adapt
+             * @returns {Element}
+             * @private
+             */
+            _adapt: function () {
+                var self = this;
+                self._setAdaptee(XP.appendChild(Polymer.dom(self), XP.createElement('input', {attributes: {type: 'text', value: self.value}})));
+                return self;
+            },
+
+            /**
+             * Reflects adapted input's `value` onto the element.
              *
              * @method _commitFrom
              * @returns {Element}
@@ -325,12 +337,12 @@ It must be used in conjunction with mat-option.
              */
             _commitFrom: function () {
                 var self = this;
-                self.value = self.input.value;
+                self.value = self.adaptee.value;
                 return self;
             },
 
             /**
-             * Commits to input's value.
+             * Reflects element's `value` onto the adapted input.
              *
              * @method _commitTo
              * @returns {Element}
@@ -338,7 +350,7 @@ It must be used in conjunction with mat-option.
              */
             _commitTo: function () {
                 var self = this;
-                if (self.value !== self.input.value) { self.input.value = self.value; }
+                if (self.value !== self.adaptee.value) { self.adaptee.value = self.value; }
                 return self;
             },
 
@@ -367,7 +379,7 @@ It must be used in conjunction with mat-option.
             },
 
             /**
-             * Indexes the input.
+             * Reflects element's `tabIndex` onto the adapted input.
              *
              * @method _index
              * @param {number} value
@@ -378,19 +390,6 @@ It must be used in conjunction with mat-option.
                 var self = this;
                 self.$.matDropdownPicked.tabIndex = value;
                 self.$.matDropdownFirst.tabIndex  = value;
-                return self;
-            },
-
-            /**
-             * Injects the input element.
-             *
-             * @method _inject
-             * @returns {Element}
-             * @private
-             */
-            _inject: function () {
-                var self = this;
-                self._setInput(XP.appendChild(Polymer.dom(self), XP.createElement('input', {attributes: {type: 'text', value: self.value}})));
                 return self;
             },
 
@@ -408,7 +407,7 @@ It must be used in conjunction with mat-option.
             },
 
             /**
-             * Updates the input.
+             * Updates adapted input's attributes.
              *
              * @method _update
              * @returns {Element}
@@ -416,14 +415,14 @@ It must be used in conjunction with mat-option.
              */
             _update: function () {
                 var self = this;
-                XP.setAttribute(self.input, 'disabled', self.disabled);
-                XP.setAttribute(self.input, 'name', self.name);
-                XP.setAttribute(self.input, 'required', self.required);
+                XP.setAttribute(self.adaptee, 'disabled', self.disabled);
+                XP.setAttribute(self.adaptee, 'name', self.name);
+                XP.setAttribute(self.adaptee, 'required', self.required);
                 return self;
             },
 
             /**
-             * Validates the input.
+             * Validates adapted input's `value`.
              *
              * @method _validate
              * @returns {Element}
@@ -431,8 +430,8 @@ It must be used in conjunction with mat-option.
              */
             _validate: function () {
                 var self = this;
-                self._setInvalid(self.input.validity.valid !== true);
-                self._setInvalidMessage(self.input.validationMessage || null);
+                self._setInvalid(self.adaptee.validity.valid !== true);
+                self._setInvalidMessage(self.adaptee.validationMessage || null);
                 return self;
             },
 
@@ -444,6 +443,11 @@ It must be used in conjunction with mat-option.
                 'selection-changed': '_handleSelection',
                 'value-changed': '_handleValue'
             },
+
+            // OBSERVERS
+            observers: [
+                '_refresh(required)'
+            ],
 
             // PROPERTIES
             properties: {
