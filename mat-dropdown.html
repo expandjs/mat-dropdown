@@ -7,9 +7,46 @@ The complete set of contributors may be found at https://expandjs.github.io/CONT
 -->
 
 <!--
-This element is used to display a material dropdown.
+An element used to display a [Material Design dropdown](http://www.google.com/design/spec/components/buttons.html#buttons-other-buttons).
 
-It must be used in conjunction with mat-option.
+```html
+<mat-dropdown label="Select an option">
+    <mat-option label="Option 1" value="1"></mat-option>
+    <mat-option label="Option 2" value="2"></mat-option>
+    <mat-option label="Option 3" value="3"></mat-option>
+</mat-dropdown>
+```
+
+The dropdown can also be set to a `pulldown` mode, which will make it look like more like a desktop dropdown.
+
+```html
+<mat-dropdown label="Fonts" pulldown>
+    <mat-option label="Arial" value="arial"></mat-option>
+    <mat-option label="Helvetica" value="helvetica"></mat-option>
+    <mat-option label="Roboto" value="roboto"></mat-option>
+</mat-dropdown>
+```
+
+To access the actual value, you have two attributes:
+
+- **value** is the current value as string
+- **model** does the same, however it adds some additional behaviors
+
+If the initial value was `null`, when the dropdown is unselected, the `model` returns to
+`null` instead of an empty string.
+
+This is useful for binding data that has not yet been initialized, needs to be created on
+the fly or comes from external sources.
+
+Generally, we recommend to use the `model` for data binding and `value` to set the default.
+
+```html
+<mat-dropdown label="Select an option" model="{{myDropdown}}" value="1">
+    <mat-option label="Option 1" value="1"></mat-option>
+    <mat-option label="Option 2" value="2"></mat-option>
+    <mat-option label="Option 3" value="3"></mat-option>
+</mat-dropdown>
+```
 
 @element mat-dropdown
 @description A custom element used to display a Material Design dropdown
@@ -24,18 +61,18 @@ It must be used in conjunction with mat-option.
 @behavior xp-selected-behavior /bower_components/xp-selected-behavior/xp-selected-behavior.html
 
 @dependency polymer Polymer/polymer#^1.0.0
-@dependency expandjs ExpandJS/expandjs#0.9.5
-@dependency mat-divider ExpandJS/mat-divider#0.9.5
-@dependency mat-icon ExpandJS/mat-icon#0.9.5
-@dependency mat-icons ExpandJS/mat-icons#0.9.5
-@dependency mat-input-decorator ExpandJS/mat-input-decorator#0.9.5
-@dependency mat-menu ExpandJS/mat-menu#0.9.5
-@dependency mat-option ExpandJS/mat-option#0.9.5
-@dependency xp-input-behavior ExpandJS/xp-input-behavior#0.9.5
-@dependency xp-referral-behavior ExpandJS/xp-referral-behavior#0.9.5
-@dependency xp-selected-behavior ExpandJS/xp-selected-behavior#0.9.5
+@dependency expandjs ExpandJS/expandjs#0.9.6
+@dependency mat-divider ExpandJS/mat-divider#0.9.6
+@dependency mat-icon ExpandJS/mat-icon#0.9.6
+@dependency mat-icons ExpandJS/mat-icons#0.9.6
+@dependency mat-input-decorator ExpandJS/mat-input-decorator#0.9.6
+@dependency mat-menu ExpandJS/mat-menu#0.9.6
+@dependency mat-option ExpandJS/mat-option#0.9.6
+@dependency xp-input-behavior ExpandJS/xp-input-behavior#0.9.6
+@dependency xp-referral-behavior ExpandJS/xp-referral-behavior#0.9.6
+@dependency xp-selected-behavior ExpandJS/xp-selected-behavior#0.9.6
 
-@devDependency mat-demo ExpandJS/mat-demo#0.9.5
+@devDependency mat-demo ExpandJS/mat-demo#0.9.6
 -->
 
 <link rel="import" href="../polymer/polymer.html">
@@ -102,8 +139,8 @@ It must be used in conjunction with mat-option.
 
         :host(:not([floated])) #matDropdownDecorator::shadow #matInputPlaceholder,
         :host([floated][empty-selection]:not([showed])) #matDropdownDecorator::shadow #matInputPlaceholder {
-        @apply(--mat-font-subhead);
-            line-height: 36px !important; /* override */
+            @apply(--mat-font-subhead);
+            line-height: 32px !important; /* override */
             -webkit-transform: translate3d(0, 0px, 0);
             transform: translate3d(0, 0px, 0);
         }
@@ -148,7 +185,7 @@ It must be used in conjunction with mat-option.
         }
 
         :host #matDropdownPicked {
-            height: 36px;
+            height: 32px;
         }
 
         :host([full-width]) #matDropdownPicked,
@@ -218,8 +255,9 @@ It must be used in conjunction with mat-option.
         <mat-input-decorator id="matDropdownDecorator" description="[[description]]" disabled="[[disabled]]"
                              empty="[[emptySelection]]" error="[[error]]" floated="{{floated}}" focused="[[focused]]"
                              floating-label="[[_hasFloatingLabel(floatingLabel, fullWidth, pulldown)]]"
-                             full-width="[[fullWidth]]" input="[[adaptee]]" invalid="[[invalid]]"
-                             invalid-message="[[invalidMessage]]" label="[[label]]" value="[[value]]">
+                             full-width="[[fullWidth]]" helper-disabled="[[helperDisabled]]" input="[[adaptee]]"
+                             invalid="[[invalid]]" invalid-message="[[invalidMessage]]" label="[[label]]"
+                             value="[[value]]">
             <div id="matDropdownSpacer">
                 <div class="dummyOption">{{label}}</div>
                 <template is="dom-repeat" items="[[items]]" observe="label value">
@@ -511,6 +549,19 @@ It must be used in conjunction with mat-option.
                  * @default false
                  */
                 fullWidth: {
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
+                 * If set to true, the helper is hidden.
+                 *
+                 * @attribute helper-disabled
+                 * @type boolean
+                 * @default false
+                 */
+                helperDisabled: {
                     reflectToAttribute: true,
                     type: Boolean,
                     value: false
