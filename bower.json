@@ -2,6 +2,7 @@
   "name": "mat-dropdown",
   "license": "BSD-3-Clause",
   "version": "0.9.6",
+  "main": "mat-dropdown.html",
   "description": "A custom element used to display a Material Design dropdown",
   "homepage": "http://expandjs.com/elements/mat-dropdown",
   "authors": [
@@ -17,9 +18,6 @@
     "html5",
     "expandjs",
     "web-components"
-  ],
-  "main": [
-    "mat-dropdown.html"
   ],
   "ignore": [
     "**/.*"
