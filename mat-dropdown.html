@@ -89,169 +89,170 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
 
 <dom-module id="mat-dropdown">
 
-    <style>
-        :host {
-            display: block;
-            overflow: visible;
-        }
+    <template>
 
-        :host([empty-items]) {
-            display: none !important;
-        }
+        <style>
+            :host {
+                display: block;
+                overflow: visible;
+            }
 
-        :host([inline]) {
-            display: inline-block;
-        }
+            :host([empty-items]) {
+                display: none !important;
+            }
 
-        :host([full-width]) {
-            display: block;
-            margin: 0;
-            width: auto !important;
-        }
-
-        :host ::content input {
-            display: none !important;
-        }
-
-        :host #matDropdownDecorator::shadow #matInputPrefix,
-        :host #matDropdownDecorator::shadow #matInputSuffix,
-        :host #matDropdownOptions ::content mat-option #matOptionIcon,
-        :host #matDropdownOptions ::content mat-option #matOptionSecondaryText,
-        :host([full-width]) #matDropdownDecorator::shadow #matInputUnderline,
-        :host([full-width]) #matDropdownDecorator::shadow #matInputHelper,
-        :host([pulldown]) #matDropdownDecorator::shadow #matInputUnderline,
-        :host([pulldown]) #matDropdownDecorator::shadow #matInputHelper,
-        :host([pulldown]) #matDropdownOptions ::content mat-option[active] {
-            display: none !important;
-        }
-
-        :host([full-width]) #matDropdownDecorator::shadow #matInputWrapper,
-        :host([pulldown]) #matDropdownDecorator::shadow #matInputWrapper,
-        :host #matDropdownDecorator::shadow #matInputMain {
-            margin: 0;
-            padding: 0;
-        }
-
-        :host([floated]) #matDropdownDecorator::shadow #matInputPlaceholder {
-            -webkit-transform: translate3d(0, -16px, 0);
-            transform: translate3d(0, -16px, 0);
-        }
-
-        :host(:not([floated])) #matDropdownDecorator::shadow #matInputPlaceholder,
-        :host([floated][empty-selection]:not([showed])) #matDropdownDecorator::shadow #matInputPlaceholder {
-            @apply(--mat-font-subhead);
-            line-height: 32px !important; /* override */
-            -webkit-transform: translate3d(0, 0px, 0);
-            transform: translate3d(0, 0px, 0);
-        }
-
-        :host([full-width]) #matDropdownDecorator::shadow #matInputPlaceholder,
-        :host([pulldown]) #matDropdownDecorator::shadow #matInputPlaceholder {
-            line-height: 56px !important; /* override */
-        }
-
-        :host #matDropdownDecorator::shadow #matInputPlaceholder,
-        :host #matDropdownPicked::shadow #matOptionMain {
-            padding: 0;
-        }
-
-        :host([full-width]) #matDropdownDecorator::shadow #matInputPlaceholder,
-        :host([full-width]) #matDropdownPicked::shadow #matOptionMain {
-            padding: 0 16px;
-        }
-
-        :host([pulldown]) #matDropdownDecorator::shadow #matInputPlaceholder,
-        :host([pulldown]) #matDropdownPicked::shadow #matOptionMain {
-            padding: 0 16px 0 24px;
-        }
-
-        :host #matDropdownDecorator .dummyOption {
-            @apply(--mat-font-subhead);
-            height: 0 !important;
-            overflow: hidden;
-            text-overflow: ellipsis !important; /* override */
-            white-space: nowrap !important; /* override */
-        }
-
-        :host #matDropdownDecorator .dummyOption,
-        :host #matDropdownOptions ::content mat-option #matOptionMain {
-            padding: 0 24px 0 16px;
-        }
-
-        :host([pulldown]) #matDropdownDecorator .dummyOption,
-        :host([pulldown]) #matDropdownOptions ::content mat-option #matOptionMain,
-        :host([pulldown]) #matDropdownFirst::shadow #matOptionMain {
-            padding: 0 48px 0 24px;
-        }
-
-        :host #matDropdownPicked {
-            height: 32px;
-        }
-
-        :host([full-width]) #matDropdownPicked,
-        :host([pulldown]) #matDropdownPicked {
-            height: 56px;
-        }
-
-        :host([empty-selection]) #matDropdownPicked::shadow #matOptionWrapper[foreground="dark"] #matOptionLabel {
-            opacity: 0.44;
-        }
-
-        :host([empty-selection]) #matDropdownPicked::shadow #matOptionWrapper[foreground="light"] #matOptionLabel {
-            opacity: 0.30;
-        }
-
-        :host #matDropdownUp {
-            position: absolute;
-            right: 16px;
-            top: 16px;
-        }
-
-        :host(:not([pulldown])) #matDropdownUp {
-            display: none !important;
-        }
-
-        :host([empty-selection]) #matDropdownFirst,
-        :host(:not([pulldown])) #matDropdownFirst {
-            display: none !important;
-        }
-
-        :host #matDropdownDivider {
-            top: 56px;
-        }
-
-        :host(:not([pulldown])) #matDropdownDivider {
-            display: none !important;
-        }
-
-        :host([pulldown]) #matDropdownOptions ::content mat-option,
-        :host([pulldown]) #matDropdownFirst {
-            height: 56px;
-            margin: -8px 0 8px 0;
-        }
-
-        :host([pulldown]) #matDropdownOptions ::content mat-option + mat-option,
-        :host([pulldown]:not([empty-selection])) #matDropdownOptions ::content mat-option {
-            height: 32px;
-            margin: 0;
-        }
-
-        /* TABLET */
-
-        @media (min-width: 960px) {
+            :host([inline]) {
+                display: inline-block;
+            }
 
             :host([full-width]) {
+                display: block;
                 margin: 0;
+                width: auto !important;
+            }
+
+            :host ::content input {
+                display: none !important;
+            }
+
+            :host #matDropdownDecorator::shadow #matInputPrefix,
+            :host #matDropdownDecorator::shadow #matInputSuffix,
+            :host #matDropdownOptions ::content mat-option #matOptionIcon,
+            :host #matDropdownOptions ::content mat-option #matOptionSecondaryText,
+            :host([full-width]) #matDropdownDecorator::shadow #matInputUnderline,
+            :host([full-width]) #matDropdownDecorator::shadow #matInputHelper,
+            :host([pulldown]) #matDropdownDecorator::shadow #matInputUnderline,
+            :host([pulldown]) #matDropdownDecorator::shadow #matInputHelper,
+            :host([pulldown]) #matDropdownOptions ::content mat-option[active] {
+                display: none !important;
+            }
+
+            :host([full-width]) #matDropdownDecorator::shadow #matInputWrapper,
+            :host([pulldown]) #matDropdownDecorator::shadow #matInputWrapper,
+            :host #matDropdownDecorator::shadow #matInputMain {
+                margin: 0;
+                padding: 0;
+            }
+
+            :host([floated]) #matDropdownDecorator::shadow #matInputPlaceholder {
+                -webkit-transform: translate3d(0, -16px, 0);
+                transform: translate3d(0, -16px, 0);
+            }
+
+            :host(:not([floated])) #matDropdownDecorator::shadow #matInputPlaceholder,
+            :host([floated][empty-selection]:not([showed])) #matDropdownDecorator::shadow #matInputPlaceholder {
+                @apply(--mat-font-subhead);
+                line-height: 32px !important; /* override */
+                -webkit-transform: translate3d(0, 0px, 0);
+                transform: translate3d(0, 0px, 0);
+            }
+
+            :host([full-width]) #matDropdownDecorator::shadow #matInputPlaceholder,
+            :host([pulldown]) #matDropdownDecorator::shadow #matInputPlaceholder {
+                line-height: 56px !important; /* override */
+            }
+
+            :host #matDropdownDecorator::shadow #matInputPlaceholder,
+            :host #matDropdownPicked::shadow #matOptionMain {
+                padding: 0;
             }
 
             :host([full-width]) #matDropdownDecorator::shadow #matInputPlaceholder,
             :host([full-width]) #matDropdownPicked::shadow #matOptionMain {
-                padding: 0 24px;
+                padding: 0 16px;
             }
-        }
-    </style>
 
-    <template>
+            :host([pulldown]) #matDropdownDecorator::shadow #matInputPlaceholder,
+            :host([pulldown]) #matDropdownPicked::shadow #matOptionMain {
+                padding: 0 16px 0 24px;
+            }
+
+            :host #matDropdownDecorator .dummyOption {
+                @apply(--mat-font-subhead);
+                height: 0 !important;
+                overflow: hidden;
+                text-overflow: ellipsis !important; /* override */
+                white-space: nowrap !important; /* override */
+            }
+
+            :host #matDropdownDecorator .dummyOption,
+            :host #matDropdownOptions ::content mat-option #matOptionMain {
+                padding: 0 24px 0 16px;
+            }
+
+            :host([pulldown]) #matDropdownDecorator .dummyOption,
+            :host([pulldown]) #matDropdownOptions ::content mat-option #matOptionMain,
+            :host([pulldown]) #matDropdownFirst::shadow #matOptionMain {
+                padding: 0 48px 0 24px;
+            }
+
+            :host #matDropdownPicked {
+                height: 32px;
+            }
+
+            :host([full-width]) #matDropdownPicked,
+            :host([pulldown]) #matDropdownPicked {
+                height: 56px;
+            }
+
+            :host([empty-selection]) #matDropdownPicked::shadow #matOptionWrapper[foreground="dark"] #matOptionLabel {
+                opacity: 0.44;
+            }
+
+            :host([empty-selection]) #matDropdownPicked::shadow #matOptionWrapper[foreground="light"] #matOptionLabel {
+                opacity: 0.30;
+            }
+
+            :host #matDropdownUp {
+                position: absolute;
+                right: 16px;
+                top: 16px;
+            }
+
+            :host(:not([pulldown])) #matDropdownUp {
+                display: none !important;
+            }
+
+            :host([empty-selection]) #matDropdownFirst,
+            :host(:not([pulldown])) #matDropdownFirst {
+                display: none !important;
+            }
+
+            :host #matDropdownDivider {
+                top: 56px;
+            }
+
+            :host(:not([pulldown])) #matDropdownDivider {
+                display: none !important;
+            }
+
+            :host([pulldown]) #matDropdownOptions ::content mat-option,
+            :host([pulldown]) #matDropdownFirst {
+                height: 56px;
+                margin: -8px 0 8px 0;
+            }
+
+            :host([pulldown]) #matDropdownOptions ::content mat-option + mat-option,
+            :host([pulldown]:not([empty-selection])) #matDropdownOptions ::content mat-option {
+                height: 32px;
+                margin: 0;
+            }
+
+            /* TABLET */
+
+            @media (min-width: 960px) {
+
+                :host([full-width]) {
+                    margin: 0;
+                }
+
+                :host([full-width]) #matDropdownDecorator::shadow #matInputPlaceholder,
+                :host([full-width]) #matDropdownPicked::shadow #matOptionMain {
+                    padding: 0 24px;
+                }
+            }
+        </style>
+
         <mat-input-decorator id="matDropdownDecorator" description="[[description]]" disabled="[[disabled]]"
                              empty="[[emptySelection]]" error="[[error]]" floated="{{floated}}" focused="[[focused]]"
                              floating-label="[[_hasFloatingLabel(floatingLabel, fullWidth, pulldown)]]"
@@ -274,6 +275,7 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
                 </div>
             </mat-menu>
         </mat-input-decorator>
+
     </template>
 
     <script>
