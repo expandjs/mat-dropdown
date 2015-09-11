@@ -440,7 +440,7 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
              * @private
              */
             _getValue: function (option) {
-                return option && XP.isAlphanumeric(option.value) ? option.value : '';
+                return option && XP.isInput(option.value) ? option.value : '';
             },
 
             /**
@@ -753,7 +753,7 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
 
                 // Vars
                 var self     = this,
-                    string   = XP.isAlphanumeric(self.value) ? self.value.toString() : '',
+                    string   = XP.isInput(self.value) ? self.value.toString() : '',
                     selected = self.selection && self.selection.value.toString() === string,
                     item     = selected ? self.selection : self.findItem(function (item) { return item.getAttribute('value') === string; });
 
