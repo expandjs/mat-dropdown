@@ -143,7 +143,6 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
             }
 
             :host([floated]) .wrapper .main .label {
-                -webkit-transform: translateY(-16px);
                 transform: translateY(-16px);
             }
 
@@ -151,7 +150,6 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
             :host(:not([floated])) .wrapper .main .label {
                 @apply(--mat-font-subhead);
                 line-height: 32px !important; /* override */
-                -webkit-transform: translateY(0);
                 transform: translateY(0);
             }
 
