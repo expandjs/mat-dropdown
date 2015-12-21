@@ -59,6 +59,7 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
 @demo http://expandjs.com/demo/mat-dropdown
 
 @behavior mat-input-behavior /bower_components/mat-input-behavior/mat-input-behavior.html
+@behavior xp-refirer-behavior /bower_components/xp-refirer-behavior/xp-refirer-behavior.html
 @behavior xp-selector-behavior /bower_components/xp-selector/xp-selector-behavior.html
 
 @dependency polymer Polymer/polymer#^1.2.0
@@ -70,6 +71,7 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
 @dependency mat-menu ExpandJS/mat-menu#0.10.0
 @dependency mat-option ExpandJS/mat-option#0.10.0
 @dependency mat-typography ExpandJS/mat-typography#0.10.0
+@dependency xp-refirer-behavior ExpandJS/xp-refirer-behavior#0.10.0
 @dependency xp-selector ExpandJS/xp-selector#0.10.0
 
 @devDependency mat-demo ExpandJS/mat-demo#0.10.0
@@ -85,6 +87,7 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
 <link rel="import" href="../mat-menu/mat-menu.html">
 <link rel="import" href="../mat-option/mat-option.html">
 <link rel="import" href="../mat-typography/mat-typography.html">
+<link rel="import" href="../xp-refirer-behavior/xp-refirer-behavior.html">
 <link rel="import" href="../xp-selector/xp-selector-behavior.html">
 
 <dom-module id="mat-dropdown">
@@ -94,6 +97,10 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
         <style include="mat-input-styles"></style>
 
         <style>
+
+            /* HOST */
+
+            :host ::content input,
             :host([empty-items]) {
                 display: none !important;
             }
@@ -102,9 +109,7 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
                 width: auto;
             }
 
-            :host ::content input {
-                display: none !important;
-            }
+            /* WRAPPER */
 
             :host .wrapper {
                 overflow: hidden;
@@ -115,27 +120,23 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
                 padding: 0 !important;
             }
 
-            /* WRAPPER */
-
             :host .wrapper .main {
                 margin: 0 !important;
             }
 
-            :host([pulldown]) .wrapper .underline,
-            :host([pulldown]) .wrapper .helper,
-            :host([full-width]) .wrapper .helper {
-                display: none !important;
+            :host .wrapper .main .spacer {
+                @apply(--mat-font-subhead);
+                height: 0;
+                overflow-x: hidden;
+                overflow-y: scroll;
             }
 
-            /* MAIN */
-
             :host .wrapper .main .dummy {
-                @apply(--mat-font-subhead);
                 height: 0;
                 overflow: hidden;
                 padding: 0 24px 0 16px;
-                text-overflow: ellipsis !important; /* override */
-                white-space: nowrap !important; /* override */
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
 
             :host([pulldown]) .wrapper .main .dummy {
@@ -177,6 +178,12 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
                 height: 56px;
                 margin: 0;
                 padding-left: 8px;
+            }
+
+            :host([pulldown]) .wrapper .underline,
+            :host([pulldown]) .wrapper .helper,
+            :host([full-width]) .wrapper .helper {
+                display: none !important;
             }
 
             /* OVERLAY */
@@ -223,7 +230,7 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
 
             @media (min-width: 960px) {
 
-                /* MAIN */
+                /* WRAPPER */
 
                 :host([full-width]) .wrapper .main .label {
                     padding: 0 24px;
@@ -252,7 +259,7 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
             </mat-ink>
         </div>
 
-        <mat-menu class="overlay" showed="{{showed}}" target="[[holder]]">
+        <mat-menu class="overlay" showed="{{showed}}" target="[[holder]]" on-xp-hide="_handleRefire" on-xp-show="_handleRefire">
             <mat-icon class="arrow icon" name="mat:arrow-drop-up" opacity="hint"></mat-icon>
             <mat-option class="first option" label="[[selection.label]]" value="[[selection.value]]"></mat-option>
             <div class="options" on-xp-activate="_handleActivate"><content></content></div>
@@ -270,8 +277,24 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
             // BEHAVIORS
             behaviors: [
                 Polymer.MatInputBehavior,
+                Polymer.XPRefirerBehavior,
                 Polymer.XPSelectorBehavior
             ],
+
+            /*********************************************************************/
+
+            /**
+             * Fired on hide.
+             *
+             * @event xp-hide
+             * @param {Element} firer
+             */
+
+            /**
+             * Fired on show.
+             * @event xp-show
+             * @param {Element} firer
+             */
 
             /*********************************************************************/
 
@@ -780,13 +803,17 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
             },
 
             // HANDLER
+            _handleRefire: function (event) {
+
+                // Refiring
+                this.refire(event, event.type, {firer: this});
+            },
+
+            // HANDLER
             _handleShow: function (event) {
 
-                // Stopping
-                event.stopPropagation();
-
                 // Showing
-                this.show();
+                return event.stopPropagation() || this.show();
             }
         });
     </script>
