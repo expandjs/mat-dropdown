@@ -248,7 +248,7 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
             <div class="main">
                 <div class="spacer"><div class="dummy">[[label]]</div><template is="dom-repeat" items="[[items]]" observe="label value"><div class="dummy">[[_computeLabel(item)]]</div></template></div>
                 <mat-ink class="label" disabled="[[disabled]]" opacity="[[_computeLabelOpacity(floated)]]">[[label]]</mat-ink>
-                <mat-option class="holder" arrow="[[_computeArrow(emptySelection, singleItem)]]" disabled="[[disabled]]" hint="[[emptySelection]]" label="[[selectedLabel]]" value="[[selectedValue]]" on-blur="_blurHandler" on-focus="_focusHandler" on-xp-activate="_handleShow"></mat-option>
+                <mat-option class="holder" arrow="[[_computeArrow(emptySelection, singleItem)]]" bold="[[selectedBold]]" disabled="[[disabled]]" hint="[[emptySelection]]" label="[[selectedLabel]]" value="[[selectedValue]]" on-blur="_blurHandler" on-focus="_focusHandler" on-xp-activate="_handleShow"></mat-option>
             </div>
             <div class="underline">
                 <mat-ink class="default" opacity="divider"></mat-ink>
@@ -261,7 +261,7 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
 
         <mat-menu class="overlay" showed="{{showed}}" target="[[holder]]" on-xp-hide="_handleRefire" on-xp-show="_handleRefire">
             <mat-icon class="arrow icon" name="mat:arrow-drop-up" opacity="hint"></mat-icon>
-            <mat-option class="first option" label="[[selection.label]]" value="[[selection.value]]"></mat-option>
+            <mat-option class="first option" bold="[[selectedBold]]" label="[[selectedLabel]]" value="[[selectedValue]]"></mat-option>
             <div class="options" on-xp-activate="_handleActivate"><content></content></div>
             <mat-divider class="divider" cap></mat-divider>
         </mat-menu>
@@ -660,6 +660,20 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
                 },
 
                 /**
+                 * If set to true, the selected option is bold.
+                 *
+                 * @attribute selected-bold
+                 * @type boolean
+                 * @notifies
+                 * @readonly
+                 */
+                selectedBold: {
+                    notify: true,
+                    readOnly: true,
+                    type: Boolean
+                },
+
+                /**
                  * The selected option's label.
                  *
                  * @attribute selected-label
@@ -710,6 +724,11 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
             // COMPUTER
             _computeArrow: function (emptySelection, singleItem) {
                 return emptySelection || !singleItem ? 'down' : null;
+            },
+
+            // COMPUTER
+            _computeBold: function (option) {
+                return option ? option.bold : false;
             },
 
             // COMPUTER
@@ -771,11 +790,12 @@ Generally, we recommend to use the `model` for data binding and `value` to set t
                 var self = this;
 
                 // Setting
+                self._setSelectedBold(self._computeBold(self.selection));
                 self._setSelectedLabel(self._computeLabel(self.selection));
                 self._setSelectedValue(self._computeValue(self.selection));
 
                 // Observing
-                XP.onMutation(self, self.mutated.bind(self), {attributes: true, attributeFilter: ['active', 'label', 'value'], subtree: true});
+                XP.onMutation(self, self.mutated.bind(self), {attributes: true, attributeFilter: ['active', 'bold', 'label', 'value'], subtree: true});
             },
 
             // LISTENER

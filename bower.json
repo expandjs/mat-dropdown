@@ -30,6 +30,7 @@
     "mat-menu": "ExpandJS/mat-menu#0.10.0",
     "mat-option": "ExpandJS/mat-option#0.10.0",
     "mat-typography": "ExpandJS/mat-typography#0.10.0",
+    "xp-refirer-behavior": "ExpandJS/xp-refirer-behavior#0.10.0",
     "xp-selector": "ExpandJS/xp-selector#0.10.0",
     "polymer": "Polymer/polymer#^1.2.0"
   },
